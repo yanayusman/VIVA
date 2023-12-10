@@ -10,26 +10,34 @@ public class Q1 {
         System.out.print("Enter column of matrices: ");
         int c = sc.nextInt();
         
-        System.out.println("Addition of 2x2 matrices: ");
         System.out.println("Matrix A: ");
         int[][] matA = getMatrix(r, c);
         System.out.println("Matrix B: ");
         int[][] matB = getMatrix(r, c);
 
+        System.out.println("\nAddition of "+ r+"x"+c+" matrices: ");
+        System.out.println("\nMatrix A: ");
+        display(matA);
+
+        System.out.println("\nMatrix B: ");
+        display(matB);
+
         int[][] add = addition( matA, matB, r, c);
         System.out.println("\nResultant Matrix:");
         display(add);
         
+        System.out.println("\nSubtraction of "+ r+"x"+c+" matrices: ");
         int[][] subtract = subtraction(matA, matB, r ,c);
         System.out.println("\nResultant Matrix:");
         display(subtract);
         
+        System.out.println("\nMultiplication of "+r+"x"+c+" matrices: ");
         int[][] multiply =  multiplication(matA, matB, r, c);
         System.out.println("\nResultant Matrix:");
         display(multiply);
 
         int rD= 3, cD = 3;
-        System.out.println("\nDeterminant of 3x3 matrices: ");
+        System.out.println("\nDeterminant of "+r+"x"+c+" matrices: ");
         System.out.println("Matrix A: ");
         double[][] matAD = getMatrixD(rD, cD);
         double det = determinant(matAD, rD, cD);
