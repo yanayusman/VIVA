@@ -20,6 +20,14 @@ public class Q1 {
         System.out.println("\nResultant Matrix:");
         display(add);
 
+        int[][] subtract = subtraction(matA, matB, r ,c);
+        System.out.println("\nResultant Matrix:");
+        display(subtract);
+        
+        int[][] multiply =  multiplication(matA, matB, r, c);
+        System.out.println("\nResultant Matrix:");
+        display(multiply);
+
         int rD= 3, cD = 3;
         System.out.println("\nDeterminant of 3x3 matrices: ");
         System.out.println("Matrix A: ");
@@ -78,7 +86,26 @@ public class Q1 {
         }
         return add;
     }
-
+     public static int [][] subtraction(int[][]matA, int[][]matB, int r, int c){
+        int[][]subtract = new int[r][c];
+        
+        for(int i = 0; i < r ; i++){
+            for(int j = 0; j < c; j++){
+                subtract[i][j] = matA[i][j] - matB[i][j];
+            }
+        }
+        return subtract;
+    }
+    public static int[][] multiplication(int[][]matA, int[][]matB, int r, int c){
+        int[][]multiply = new int[r][c];
+        
+        for(int i = 0; i < r; i++){
+            for(int j = 0; j < c; j++){
+                multiply[i][j] = matA[i][j] * matB[i][j];
+            }
+        }
+        return multiply;
+    }
     public static double determinant(double[][] matA, int r, int c){
         return (matA[0][0] * ((matA[1][1] * matA[2][2]) - (matA[1][2] * matA[2][1]))) - (matA[0][1] * ((matA[1][0] * matA[2][2]) - (matA[1][2] * matA[2][0]))) + (matA[0][2] * ((matA[1][0] * matA[2][1]) - (matA[1][1] * matA[2][0])));
     }
