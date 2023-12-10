@@ -4,9 +4,10 @@ use this command to update the repository
 
 ```bash
 $ git status
+$ git branch -M <main>
 $ git add <filename>
 $ git commit -m '<Message>'
-$ git branch -M <main>
+
 
 $ git pull origin
 $ git push origin 
