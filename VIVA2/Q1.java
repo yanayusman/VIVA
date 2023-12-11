@@ -5,10 +5,7 @@ public class Q1 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter row of matrices: ");
-        int r = sc.nextInt();
-        System.out.print("Enter column of matrices: ");
-        int c = sc.nextInt();
+        int r = 2, c = 2;
         
         System.out.println("Addition of 2x2 matrices: ");
         System.out.println("Matrix A: ");
@@ -19,6 +16,14 @@ public class Q1 {
         int[][] add = addition( matA, matB, r, c);
         System.out.println("\nResultant Matrix:");
         display(add);
+        
+        int[][] subtract = subtraction(matA, matB, r ,c);
+        System.out.println("\nResultant Matrix:");
+        display(subtract);
+        
+        int[][] multiply =  multiplication(matA, matB, r, c);
+        System.out.println("\nResultant Matrix:");
+        display(multiply);
 
         int rD= 3, cD = 3;
         System.out.println("\nDeterminant of 3x3 matrices: ");
@@ -77,6 +82,26 @@ public class Q1 {
             }
         }
         return add;
+    }
+     public static int [][] subtraction(int[][]matA, int[][]matB, int r, int c){
+        int[][]subtract = new int[r][c];
+        
+        for(int i = 0; i < r ; i++){
+            for(int j = 0; j < c; j++){
+                subtract[i][j] = matA[i][j] - matB[i][j];
+            }
+        }
+        return subtract;
+    }
+    public static int[][] multiplication(int[][]matA, int[][]matB, int r, int c){
+        int[][]multiply = new int[r][c];
+        
+        for(int i = 0; i < r; i++){
+            for(int j = 0; j < c; j++){
+                multiply[i][j] = matA[i][j] * matB[i][j];
+            }
+        }
+        return multiply;
     }
 
     public static double determinant(double[][] matA, int r, int c){
