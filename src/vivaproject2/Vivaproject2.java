@@ -54,10 +54,7 @@ public class Vivaproject2 {
                     z++;
                    }   
           } }   
-            int[] tryjap = new int[3];
-            for(int y=0; y<tryjap.length; y++){
-                System.out.print(tryjap[y]);
-            }
+           
             
             int[] result = new int[z];
             for(int r=0 ; r<result.length; r++){
