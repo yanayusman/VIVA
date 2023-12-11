@@ -5,10 +5,7 @@ public class Q1 {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
-        System.out.print("Enter row of matrices: ");
-        int r = sc.nextInt();
-        System.out.print("Enter column of matrices: ");
-        int c = sc.nextInt();
+        int r = 2, c = 2;
         
         System.out.println("Matrix A: ");
         int[][] matA = getMatrix(r, c);
