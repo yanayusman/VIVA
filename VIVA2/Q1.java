@@ -67,7 +67,6 @@ public class Q1 {
     }
 
     public static void display(double[][] mat) {
-        System.out.println("Inverse Matrix:");
         for (double[] row : mat) {
             for (double val : row) {
                 System.out.printf("%.2f   ", val);
@@ -109,7 +108,6 @@ public class Q1 {
                 }
             }
         }
-
         return multiply;
     }
 
