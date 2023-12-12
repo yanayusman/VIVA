@@ -51,7 +51,7 @@ public class Q1 {
         double[][] matAI = getMatrixD(rI, cI);
         System.out.println("\nInverse of Matrix:");
         double[][] inverseMat = inverse(matAI);
-        displayI(inverseMat);
+        display(inverseMat);
     }
 
     public static double[][] getMatrix(int r, int c){
@@ -78,16 +78,7 @@ public class Q1 {
         return mat;
     }
 
-    public static void display(double[][] mat){
-        for(double[] row : mat){
-            for(double val : row){
-                System.out.print(val + "   ");
-            }
-            System.out.println();
-        }
-    }
-
-    public static void displayI(double[][] mat) {
+    public static void display(double[][] mat) {
         System.out.println("Inverse Matrix:");
         for (double[] row : mat) {
             for (double val : row) {
