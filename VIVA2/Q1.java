@@ -3,10 +3,8 @@ import java.util.Scanner;
 
 public class Q1 {
     public static void main(String[] args) {
-
-        int r = 2, c = 2;
-
         //addition
+        int r = 2, c = 2;
         System.out.println("\nAddition of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
         double[][] matA = getMatrix(r, c);
@@ -17,21 +15,23 @@ public class Q1 {
         display(add);
         
         //subtraction
-        System.out.println("\nSubtraction of "+ r +"x"+ c +" matrices: ");
+        int rS = 2, cS = 2;
+        System.out.println("\nSubtraction of "+ rS +"x"+ cS +" matrices: ");
         System.out.println("Matrix A: ");
-        double[][] matAS = getMatrix(r, c);
+        double[][] matAS = getMatrix(rS, cS);
         System.out.println("Matrix B: ");
-        double[][] matBS = getMatrix(r, c);
-        double[][] subtract = subtraction(matAS, matBS, r ,c);
+        double[][] matBS = getMatrix(rS, cS);
+        double[][] subtract = subtraction(matAS, matBS, rS ,cS);
         System.out.println("\nResultant Matrix:");
         display(subtract);
         
         //multiplication
+        int rM = 2, cM = 2;
         System.out.println("\nMultiplication of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
-        double[][] matAM = getMatrix(r, c);
+        double[][] matAM = getMatrix(rM, cM);
         System.out.println("Matrix B: ");
-        double[][] matBM = getMatrix(r, c);
+        double[][] matBM = getMatrix(rM, cM);
         double[][] multiply =  multiplication(matAM, matBM);
         System.out.println("\nResultant Matrix:");
         display(multiply);
@@ -40,7 +40,7 @@ public class Q1 {
         int rD= 2, cD = 2;
         System.out.println("\nDeterminant of "+ rD +"x"+ cD +" matrices: ");
         System.out.println("Matrix A: ");
-        double[][] matAD = getMatrixD(rD, cD);
+        double[][] matAD = getMatrix(rD, cD);
         double det = determinant(matAD);
         System.out.println("Determinant of Matrix: " + det);
 
@@ -48,25 +48,13 @@ public class Q1 {
         int rI = 3, cI = 3;
         System.out.println("Inverse of Matrix: ");
         System.out.println("Matrix A: ");
-        double[][] matAI = getMatrixD(rI, cI);
+        double[][] matAI = getMatrix(rI, cI);
         System.out.println("\nInverse of Matrix:");
         double[][] inverseMat = inverse(matAI);
         display(inverseMat);
     }
 
     public static double[][] getMatrix(int r, int c){
-        Scanner sc = new Scanner(System.in);
-
-        double[][] mat = new double[r][c];
-        for(int i = 0; i < r; i++){
-            for(int j = 0; j < c; j++){
-                mat[i][j] = sc.nextDouble();
-            }
-        }
-        return mat;
-    }
-
-    public static double[][] getMatrixD(int r, int c){
         Scanner sc = new Scanner(System.in);
 
         double[][] mat = new double[r][c];
