@@ -3,63 +3,58 @@ import java.util.Scanner;
 
 public class Q1 {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-
+        //addition
         int r = 2, c = 2;
-        
+        System.out.println("\nAddition of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
-        int[][] matA = getMatrix(r, c);
+        double[][] matA = getMatrix(r, c);
         System.out.println("Matrix B: ");
-        int[][] matB = getMatrix(r, c);
-
-        System.out.println("\nAddition of "+ r+"x"+c+" matrices: ");
-        System.out.println("\nMatrix A: ");
-        display(matA);
-
-        System.out.println("\nMatrix B: ");
-        display(matB);
-
-        int[][] add = addition( matA, matB, r, c);
+        double[][] matB = getMatrix(r, c);
+        double[][] add = addition( matA, matB, r, c);
         System.out.println("\nResultant Matrix:");
         display(add);
         
-        System.out.println("\nSubtraction of "+ r+"x"+c+" matrices: ");
-        int[][] subtract = subtraction(matA, matB, r ,c);
+        //subtraction
+        int rS = 2, cS = 2;
+        System.out.println("\nSubtraction of "+ rS +"x"+ cS +" matrices: ");
+        System.out.println("Matrix A: ");
+        double[][] matAS = getMatrix(rS, cS);
+        System.out.println("Matrix B: ");
+        double[][] matBS = getMatrix(rS, cS);
+        double[][] subtract = subtraction(matAS, matBS, rS ,cS);
         System.out.println("\nResultant Matrix:");
         display(subtract);
         
-        System.out.println("\nMultiplication of "+r+"x"+c+" matrices: ");
-        int[][] multiply =  multiplication(matA, matB, r, c);
+        //multiplication
+        int rM = 2, cM = 2;
+        System.out.println("\nMultiplication of "+ r +"x"+ c +" matrices: ");
+        System.out.println("Matrix A: ");
+        double[][] matAM = getMatrix(rM, cM);
+        System.out.println("Matrix B: ");
+        double[][] matBM = getMatrix(rM, cM);
+        double[][] multiply =  multiplication(matAM, matBM);
         System.out.println("\nResultant Matrix:");
         display(multiply);
 
-        int rD= 3, cD = 3;
-        System.out.println("\nDeterminant of "+r+"x"+c+" matrices: ");
+        //determinant
+        int rD= 2, cD = 2;
+        System.out.println("\nDeterminant of "+ rD +"x"+ cD +" matrices: ");
         System.out.println("Matrix A: ");
-        double[][] matAD = getMatrixD(rD, cD);
-        double det = determinant(matAD, rD, cD);
+        double[][] matAD = getMatrix(rD, cD);
+        double det = determinant(matAD);
         System.out.println("Determinant of Matrix: " + det);
 
-        
-        System.out.println("Inverse of Matrix: ");
-        inverse(matAD, r, c, det);
-        sc.close();
+        //inverse
+        int rI = 3, cI = 3;
+        System.out.println("\nInverse of Matrix: ");
+        System.out.println("Matrix A: ");
+        double[][] matAI = getMatrix(rI, cI);
+        System.out.println("\nInverse of Matrix:");
+        double[][] inverseMat = inverse(matAI);
+        display(inverseMat);
     }
 
-    public static int[][] getMatrix(int r, int c){
-        Scanner sc = new Scanner(System.in);
-
-        int[][] mat = new int[r][c];
-        for(int i = 0; i < r; i++){
-            for(int j = 0; j < c; j++){
-                mat[i][j] = sc.nextInt();
-            }
-        }
-      
-        return mat;
-    }
-
-    public static double[][] getMatrixD(int r, int c){
+    public static double[][] getMatrix(int r, int c){
         Scanner sc = new Scanner(System.in);
 
         double[][] mat = new double[r][c];
@@ -68,21 +63,20 @@ public class Q1 {
                 mat[i][j] = sc.nextDouble();
             }
         }
-      
         return mat;
     }
 
-    public static void display(int[][] mat){
-        for(int[] row : mat){
-            for(int val : row){
-                System.out.print(val + " ");
+    public static void display(double[][] mat) {
+        for (double[] row : mat) {
+            for (double val : row) {
+                System.out.printf("%.2f   ", val);
             }
             System.out.println();
         }
     }
 
-    public static int[][] addition(int[][] matA, int[][] matB, int r, int c){
-        int[][] add = new int[r][c];
+    public static double[][] addition(double[][] matA, double[][] matB, int r, int c){
+        double[][] add = new double[r][c];
 
         for(int i = 0; i < r; i++){
             for(int j = 0; j < c; j++){
@@ -91,8 +85,9 @@ public class Q1 {
         }
         return add;
     }
-     public static int [][] subtraction(int[][]matA, int[][]matB, int r, int c){
-        int[][]subtract = new int[r][c];
+
+     public static double [][] subtraction(double[][]matA, double[][]matB, int r, int c){
+        double[][]subtract = new double[r][c];
         
         for(int i = 0; i < r ; i++){
             for(int j = 0; j < c; j++){
@@ -101,32 +96,99 @@ public class Q1 {
         }
         return subtract;
     }
-    public static int[][] multiplication(int[][]matA, int[][]matB, int r, int c){
-        int[][]multiply = new int[r][c];
-        
-        for(int i = 0; i < r; i++){
-            for(int j = 0; j < c; j++){
-                multiply[i][j] = matA[i][j] * matB[i][j];
+
+    public static double[][] multiplication(double[][]matA, double[][]matB){
+        int r1 = matA.length, c1 = matA[0].length, r2 = matB.length, c2 = matB[0].length;
+        double[][] multiply = new double[r1][c2];
+
+        for(int i = 0; i < r1; i++){
+            for(int j = 0; j < c2; j++){
+                for(int k = 0; k < c1; k++){
+                    multiply[i][j] += matA[i][k] * matB[k][j]; 
+                }
             }
         }
         return multiply;
     }
 
-    public static double determinant(double[][] matA, int r, int c){
-        return (matA[0][0] * ((matA[1][1] * matA[2][2]) - (matA[1][2] * matA[2][1]))) - (matA[0][1] * ((matA[1][0] * matA[2][2]) - (matA[1][2] * matA[2][0]))) + (matA[0][2] * ((matA[1][0] * matA[2][1]) - (matA[1][1] * matA[2][0])));
+    public static double determinant(double[][] matA) {
+        int r = matA.length;
+        int c = matA[0].length;
+
+        //1x1, return the same element
+        if (r == 1 && c == 1)
+            return matA[0][0];
+    
+        //2x2, return using formula ad-bc 
+        if (r == 2 && c == 2)
+            return matA[0][0] * matA[1][1] - matA[0][1] * matA[1][0];
+    
+        //size larger than 2x2
+        double determinantValue = 0;
+        for (int j = 0; j < c; j++) {
+            //calculate the cofactor (matrix without current row and column)
+            double[][] cofactor = new double[r - 1][c - 1];
+            for (int i = 1; i < r; i++) {
+                for (int k = 0, l = 0; k < c; k++) {
+                    if (k != j) {
+                        cofactor[i - 1][l++] = matA[i][k];
+                    }
+                }
+            }
+    
+            //calculate determinant of the cofactor
+            double cofactorDeterminant = determinant(cofactor);
+    
+            // Add the contribution of this element to the determinant
+            determinantValue += (j % 2 == 0 ? 1 : -1) * matA[0][j] * cofactorDeterminant;
+        }
+    
+        return determinantValue;
     }
 
+   public static double[][] inverse(double[][] mat){
+        int r = mat.length;
+        int c = mat[0].length;
 
+        if(r != c){
+            System.out.println("No inverse matrix because the matrix is not a square matrix");
+            System.exit(c);}
+        double det = determinant(mat);
+        if(det == 0){
+            System.out.println("No inverse matrix because the matrix is singular");
+            System.exit(c);;}
     
-    public static void inverse(double[][] matA, int r, int c, double det){
-        if(det == 0)
-            System.out.println("Inverse is not possible since the determinant is 0");
+        double[][] adjugate = adjugate(mat);
+        double inverseDet = 1.0 / det;
 
+        //multiply each element of adjugate matrix by inverse determinant
         for(int i = 0; i < r; i++){
-            for(int j = 0; j < c; j++){
-                System.out.print((((matA[(j + 1) % 3][(i + 1) % 3] * matA[(j + 2) % 3][(i + 2) % 3]) - (matA[(j + 1) % 3][(i + 2) % 3] * matA[(j + 2) % 3][(i + 1) % 3])) / det) + " ");
+            for(int j =0; j < c; j++){
+                adjugate[j][i] *= inverseDet;
             }
-            System.out.println();
         }
+        return adjugate;
+    }
+    
+    public static double[][] adjugate(double[][] mat) {
+        int r = mat.length;
+        int c = mat[0].length;
+        double[][] adjugate = new double[r][c];
+    
+        for (int i = 0; i < r; i++) {
+            for (int j = 0; j < c; j++) {
+                double cofactor = Math.pow(-1, i + j) * minorMatrix(mat, i, j);
+                adjugate[j][i] = cofactor * ((i + j) % 2 == 0 ? 1 : -1);
+            }
+        }
+    
+        return adjugate;
+    }
+
+    public static double minorMatrix(double[][] mat, int r, int c){
+        int minorR1 = (r + 1) % 3, minorR2 = (r + 2) % 3;
+        int minorC1 = (c + 1) % 3, minorC2 = (c + 2) % 3;
+
+        return mat[minorR1][minorC1] * mat[minorR2][minorC2] - mat[minorR1][minorC2] * mat[minorR2][minorC1];
     }
 }
