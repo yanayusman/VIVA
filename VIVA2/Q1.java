@@ -4,45 +4,45 @@ import java.util.Scanner;
 public class Q1 {
     public static void main(String[] args) {
 
-        // int r = 2, c = 2;
+        int r = 2, c = 2;
 
-        // //addition
-        // System.out.println("\nAddition of "+ r +"x"+ c +" matrices: ");
-        // System.out.println("Matrix A: ");
-        // int[][] matA = getMatrix(r, c);
-        // System.out.println("Matrix B: ");
-        // int[][] matB = getMatrix(r, c);
-        // int[][] add = addition( matA, matB, r, c);
-        // System.out.println("\nResultant Matrix:");
-        // display(add);
+        //addition
+        System.out.println("\nAddition of "+ r +"x"+ c +" matrices: ");
+        System.out.println("Matrix A: ");
+        int[][] matA = getMatrix(r, c);
+        System.out.println("Matrix B: ");
+        int[][] matB = getMatrix(r, c);
+        int[][] add = addition( matA, matB, r, c);
+        System.out.println("\nResultant Matrix:");
+        display(add);
         
-        // //subtraction
-        // System.out.println("\nSubtraction of "+ r +"x"+ c +" matrices: ");
-        // System.out.println("Matrix A: ");
-        // int[][] matAS = getMatrix(r, c);
-        // System.out.println("Matrix B: ");
-        // int[][] matBS = getMatrix(r, c);
-        // int[][] subtract = subtraction(matAS, matBS, r ,c);
-        // System.out.println("\nResultant Matrix:");
-        // display(subtract);
+        //subtraction
+        System.out.println("\nSubtraction of "+ r +"x"+ c +" matrices: ");
+        System.out.println("Matrix A: ");
+        int[][] matAS = getMatrix(r, c);
+        System.out.println("Matrix B: ");
+        int[][] matBS = getMatrix(r, c);
+        int[][] subtract = subtraction(matAS, matBS, r ,c);
+        System.out.println("\nResultant Matrix:");
+        display(subtract);
         
-        // //multiplication
-        // System.out.println("\nMultiplication of "+ r +"x"+ c +" matrices: ");
-        // System.out.println("Matrix A: ");
-        // int[][] matAM = getMatrix(r, c);
-        // System.out.println("Matrix B: ");
-        // int[][] matBM = getMatrix(r, c);
-        // int[][] multiply =  multiplication(matAM, matBM);
-        // System.out.println("\nResultant Matrix:");
-        // display(multiply);
+        //multiplication
+        System.out.println("\nMultiplication of "+ r +"x"+ c +" matrices: ");
+        System.out.println("Matrix A: ");
+        int[][] matAM = getMatrix(r, c);
+        System.out.println("Matrix B: ");
+        int[][] matBM = getMatrix(r, c);
+        int[][] multiply =  multiplication(matAM, matBM);
+        System.out.println("\nResultant Matrix:");
+        display(multiply);
 
-        // //determinant
-        // int rD= 2, cD = 2;
-        // System.out.println("\nDeterminant of "+ rD +"x"+ cD +" matrices: ");
-        // System.out.println("Matrix A: ");
-        // double[][] matAD = getMatrixD(rD, cD);
-        // double det = determinant(matAD);
-        // System.out.println("Determinant of Matrix: " + det);
+        //determinant
+        int rD= 2, cD = 2;
+        System.out.println("\nDeterminant of "+ rD +"x"+ cD +" matrices: ");
+        System.out.println("Matrix A: ");
+        double[][] matAD = getMatrixD(rD, cD);
+        double det = determinant(matAD);
+        System.out.println("Determinant of Matrix: " + det);
 
         //inverse
         int rI = 3, cI = 3;
