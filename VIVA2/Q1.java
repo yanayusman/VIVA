@@ -9,30 +9,30 @@ public class Q1 {
         //addition
         System.out.println("\nAddition of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
-        int[][] matA = getMatrix(r, c);
+        double[][] matA = getMatrix(r, c);
         System.out.println("Matrix B: ");
-        int[][] matB = getMatrix(r, c);
-        int[][] add = addition( matA, matB, r, c);
+        double[][] matB = getMatrix(r, c);
+        double[][] add = addition( matA, matB, r, c);
         System.out.println("\nResultant Matrix:");
         display(add);
         
         //subtraction
         System.out.println("\nSubtraction of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
-        int[][] matAS = getMatrix(r, c);
+        double[][] matAS = getMatrix(r, c);
         System.out.println("Matrix B: ");
-        int[][] matBS = getMatrix(r, c);
-        int[][] subtract = subtraction(matAS, matBS, r ,c);
+        double[][] matBS = getMatrix(r, c);
+        double[][] subtract = subtraction(matAS, matBS, r ,c);
         System.out.println("\nResultant Matrix:");
         display(subtract);
         
         //multiplication
         System.out.println("\nMultiplication of "+ r +"x"+ c +" matrices: ");
         System.out.println("Matrix A: ");
-        int[][] matAM = getMatrix(r, c);
+        double[][] matAM = getMatrix(r, c);
         System.out.println("Matrix B: ");
-        int[][] matBM = getMatrix(r, c);
-        int[][] multiply =  multiplication(matAM, matBM);
+        double[][] matBM = getMatrix(r, c);
+        double[][] multiply =  multiplication(matAM, matBM);
         System.out.println("\nResultant Matrix:");
         display(multiply);
 
@@ -54,13 +54,13 @@ public class Q1 {
         displayI(inverseMat);
     }
 
-    public static int[][] getMatrix(int r, int c){
+    public static double[][] getMatrix(int r, int c){
         Scanner sc = new Scanner(System.in);
 
-        int[][] mat = new int[r][c];
+        double[][] mat = new double[r][c];
         for(int i = 0; i < r; i++){
             for(int j = 0; j < c; j++){
-                mat[i][j] = sc.nextInt();
+                mat[i][j] = sc.nextDouble();
             }
         }
         return mat;
@@ -78,9 +78,9 @@ public class Q1 {
         return mat;
     }
 
-    public static void display(int[][] mat){
-        for(int[] row : mat){
-            for(int val : row){
+    public static void display(double[][] mat){
+        for(double[] row : mat){
+            for(double val : row){
                 System.out.print(val + "   ");
             }
             System.out.println();
@@ -97,8 +97,8 @@ public class Q1 {
         }
     }
 
-    public static int[][] addition(int[][] matA, int[][] matB, int r, int c){
-        int[][] add = new int[r][c];
+    public static double[][] addition(double[][] matA, double[][] matB, int r, int c){
+        double[][] add = new double[r][c];
 
         for(int i = 0; i < r; i++){
             for(int j = 0; j < c; j++){
@@ -108,8 +108,8 @@ public class Q1 {
         return add;
     }
 
-     public static int [][] subtraction(int[][]matA, int[][]matB, int r, int c){
-        int[][]subtract = new int[r][c];
+     public static double [][] subtraction(double[][]matA, double[][]matB, int r, int c){
+        double[][]subtract = new double[r][c];
         
         for(int i = 0; i < r ; i++){
             for(int j = 0; j < c; j++){
@@ -119,9 +119,9 @@ public class Q1 {
         return subtract;
     }
 
-    public static int[][] multiplication(int[][]matA, int[][]matB){
+    public static double[][] multiplication(double[][]matA, double[][]matB){
         int r1 = matA.length, c1 = matA[0].length, r2 = matB.length, c2 = matB[0].length;
-        int[][] multiply = new int[r1][c2];
+        double[][] multiply = new double[r1][c2];
 
         for(int i = 0; i < r1; i++){
             for(int j = 0; j < c2; j++){
