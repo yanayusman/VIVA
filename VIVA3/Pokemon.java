@@ -1,10 +1,9 @@
 package VIVA3;
-
 public class Pokemon {
-    //instance variable
+    
     private String name;
     private String type;
-    private Double strength;
+    private double strength;
 
     //constructor
     public Pokemon(String name, String type, Double strength){
@@ -22,7 +21,11 @@ public class Pokemon {
         return type;
     }
 
-    public Double getStrength(){
+    public double getStrength(){
         return strength;
+    }
+    
+    public String toString(){
+        return name;
     }
 }

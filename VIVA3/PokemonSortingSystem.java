@@ -1,32 +1,37 @@
 package VIVA3;
-
 import java.util.Arrays;
+import java.util.Comparator;
 
-public class PokemonSortingSystem{
-    //instance variable
+public class PokemonSortingSystem {
+
+    // Instance variable
     private Pokemon[] pokemonList;
 
-    //constructor
+    // Constructor
     public PokemonSortingSystem(Pokemon[] pokemonList) {
         this.pokemonList = pokemonList;
     }
 
-    //method to sort
-    public void sorPokemonList(){
-        Arrays.sort(this.pokemonList);
+    // Method to sort
+    public void sortPokemonList() {
+        Arrays.sort(pokemonList, Comparator.comparingDouble(Pokemon::getStrength));
     }
 
-    //method to determine winner
-    public String[] determineWinner(String opponentName, Pokemon[] pokemonList){
-        final Double[] opponentStrength = {0.0};
+    // Method to determine winner
+    public String[] determineWinner(String opponentName) {
+      double opponentStrength = Arrays.stream(pokemonList)
+                .findFirst()
+                .map(Pokemon::getStrength)
+                .orElse(0.0);
 
-        Arrays.stream(pokemonList).findFirst().ifPresent(pokemon -> opponentStrength[0] = pokemon.getStrength());
-
-        return Arrays.stream(pokemonList).filter(pokemon -> pokemon.getStrength() > opponentStrength[0] * getStrengthMultiplier(pokemon.getType())).map(Pokemon :: getName).toArray(String[] :: new);
+        return Arrays.stream(pokemonList)
+                .filter(pokemon -> pokemon.getStrength() > opponentStrength * getStrengthMultiplier(pokemon.getType()))
+                .map(Pokemon::toString) 
+                .toArray(String[]::new);
     }
 
-    public double getStrengthMultiplier(String type){
-        switch(type){
+    public double getStrengthMultiplier(String type) {
+        switch (type) {
             case "Flame":
                 return 1.5;
             case "Grass":
