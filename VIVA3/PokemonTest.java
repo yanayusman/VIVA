@@ -24,10 +24,9 @@ public class PokemonTest {
         String opponentName = "Squirtle";
         String[] winners = sortingSystem.determineWinner(opponentName);
         
-        System.out.print("\nPokemon effective against " + opponentName + ":");
+        System.out.print("Pokemon effective against " + opponentName + ":");
         for (String winner : winners) {
             System.out.print(winner + " ");
         }
-        System.out.println();
     }
 }
