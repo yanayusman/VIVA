@@ -1,4 +1,5 @@
 package VIVA3;
+
 public class PokemonTest {
 
  public static void main(String[] args) {
@@ -28,5 +29,6 @@ public class PokemonTest {
         for (String winner : winners) {
             System.out.print(winner + " ");
         }
+        System.out.println();
     }
 }
