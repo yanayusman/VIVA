@@ -6,21 +6,33 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.*;
 
 public class Search extends JFrame {
     final private Font font = new Font("Segoe print", Font.BOLD, 18);
     private JTextField tosearch;
+    private JTextField searchUnit;
     private JTextArea result;
     private List<Item> itemList;
-    // private List<Premise> allPremise;
-    // private List<PriceCatcherData> allpcData;
+    private List<Premise> premiseList;
+    private List<PriceCatcherData> priceList;
+    private String itemCode;
+    private String premiseCode;
+    private String itemUnit;
 
     public Search(){
         itemList = new ArrayList<>();
+        priceList = new ArrayList<>();
+        premiseList = new ArrayList<>();
+
+        this.itemCode = null;
+        this.premiseCode = null;
 
         initialize();
         loadItemData();
+        loadItemPrice();
+        loadItemPremise();
     }
 
     public void initialize() {
@@ -37,10 +49,25 @@ public class Search extends JFrame {
         lmain.setHorizontalAlignment(JLabel.CENTER);
         main.add(lmain, BorderLayout.CENTER);
 
+        JLabel lname = new JLabel("Item Name: ");
+        lname.setFont(new Font("Segoe print", Font.BOLD, 25));
+        lname.setHorizontalAlignment(JLabel.CENTER);
+        main.add(lname, BorderLayout.CENTER);
+
+        JLabel lunit = new JLabel("Item Unit: ");
+        lunit.setFont(new Font("Segoe print", Font.BOLD, 25));
+        lunit.setHorizontalAlignment(JLabel.CENTER);
+        main.add(lunit, BorderLayout.CENTER);
+
         tosearch = new JTextField();
         tosearch.setHorizontalAlignment(JLabel.CENTER);
         main.add(tosearch, BorderLayout.CENTER);
         tosearch.setFont(font);
+
+        searchUnit = new JTextField();
+        searchUnit.setHorizontalAlignment(JLabel.CENTER);
+        main.add(searchUnit, BorderLayout.CENTER);
+        searchUnit.setFont(font);
 
         result = new JTextArea(10, 30);
         main.add(result, BorderLayout.CENTER);
@@ -52,8 +79,10 @@ public class Search extends JFrame {
         btnSearch.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                System.out.println("Search button pressed");  // Add this line
+                // System.out.println("Search button pressed");
                 searchItem();
+                // searchPrice();
+                // searchPremise();
             }
         });
         
@@ -62,114 +91,33 @@ public class Search extends JFrame {
         formPanel.setLayout(new GridLayout(0, 1, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100)); 
         formPanel.add(lmain);
+        formPanel.add(lname); 
         formPanel.add(tosearch);
+        formPanel.add(lunit); 
+        formPanel.add(searchUnit);
         formPanel.add(btnSearch);
 
         add(formPanel, BorderLayout.NORTH);
         getContentPane().add(formPanel, "North");
         getContentPane().add(new JScrollPane(result), "Center");
 
-        // loadItem();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    // private void searchItem() {
-    //     SwingUtilities.invokeLater(() -> {
-    //         try {
-    //             System.out.println("Search button pressed");
-    
-    //             String itemName = tosearch.getText();
-    //             String itemCode = "", premiseCode = "";
-    //             result.setText("");
-    
-    //             // Check if allItem is not empty
-    //             if (!allItem.isEmpty()) {
-    //                 for (Item item : allItem) {
-    //                     if (item.getItem().equalsIgnoreCase(itemName)) {
-    //                         itemCode = item.getItemCode();
-    //                         System.out.println("Item found: " + item);
-    //                         result.append("Item Name: " + item.getItem() + "\n");
-    //                         result.append("Unit: " + item.getUnit() + "\n");
-    //                         result.append("Item Group: " + item.getItemGroup() + "\n");
-    //                         result.append("Item Category: " + item.getItemCategory() + "\n");
-    //                         result.append("\n");
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    
-    //             // Check if allpcData is not empty
-    //             if (!allpcData.isEmpty()) {
-    //                 for (PriceCatcherData price : allpcData) {
-    //                     if (price.getItemCode().equalsIgnoreCase(itemCode)) {
-    //                         premiseCode = price.getPremiseCode();
-    //                         System.out.println("Price found: " + price);
-    //                         result.append("Price: " + price.getPrice() + "\n");
-    //                         result.append("\n");
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    
-    //             // Check if allPremise is not empty
-    //             if (!allPremise.isEmpty()) {
-    //                 for (Premise premise : allPremise) {
-    //                     if (premise.getPremiseCode().equalsIgnoreCase(premiseCode)) {
-    //                         System.out.println("Premise found: " + premise);
-    //                         result.append("Premise Name: " + premise.getPremise() + "\n");
-    //                         result.append("Address: " + premise.getAddress() + "\n");
-    //                         result.append("Premise Type: " + premise.getPremiseType() + "\n");
-    //                         result.append("State: " + premise.getState() + "\n");
-    //                         result.append("District: " + premise.getDistrict() + "\n");
-    //                         result.append("\n");
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //             result.repaint();
-    //         } catch (Exception e) {
-    //             e.printStackTrace();
-    //         }
-    //     });
-    // }
-    
-
-    // private void loadItem(){
-    //     List<Item> itemlookup = CSVReader.readItem("lookup_item.csv");
-    //     List<Premise> premiselookup = CSVReader.readPremise("lookup_premise.csv");
-    //     List<PriceCatcherData> priceCatcherData = CSVReader.readPriceCatcherData("pricecatcher_2023-08.csv");
-
-    //     allItem = new ArrayList<>();
-    //     allItem.addAll(itemlookup);
-
-    //     allPremise = new ArrayList<>();
-    //     allPremise.addAll(premiselookup);
-
-    //     allpcData = new ArrayList<>();
-    //     allpcData.addAll(priceCatcherData);
-    // }
-
-    // private void searchItem(){
-    //     String file = "lookup_item.csv";
-    //     String itemName = tosearch.getText();
-    //     String line = "";
-    //     try(BufferedReader reader = new BufferedReader(new FileReader(file))){
-    //         while((line = reader.readLine()) != null){
-    //             String[] row = line.split(",");
-    //             for(String val : row){
-    //                 if(item.getItemName().)
-    //             }
-    //         }
-    //     }
-    // }
-
     private void loadItemData() {
         String file = "lookup_item.csv";
         String line = "";
-
+        int lineCount = 0;
+    
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             while ((line = reader.readLine()) != null) {
+                lineCount++;
+                if (lineCount <= 2) {
+                    //skip the 1st and 2nd lines
+                    continue;
+                }
+    
                 String[] parts = line.split(",");
                 Item item = createItemFromLookupItem(parts);
                 itemList.add(item);
@@ -177,7 +125,56 @@ public class Search extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    
+        // System.out.println("Item List Size: " + itemList.size()); 
     }
+
+    private void loadItemPremise() {
+        String file = "lookup_premise.csv";
+        int lineCount = 0;
+    
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line = "";
+            while ((line = br.readLine()) != null) {
+                lineCount++;
+                if(lineCount < 2 || lineCount == 2709){
+                    continue;
+                }
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                
+                for(int i = 0; i < parts.length; i++){
+                    parts[i] = parts[i].replaceAll("^\"|\"$", "");
+                }
+                Premise premise = createPremiseFromLookupPremise((parts));
+                premiseList.add(premise);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    //     System.out.println("Item Premise Size: " + premiseList.size());
+    }
+
+    private void loadItemPrice() {
+        String file = "pricecatcher_2023-08.csv";
+        String line = "";
+        int lineCount = 0;
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            while ((line = reader.readLine()) != null) {
+                lineCount++;
+                if (lineCount == 1) {
+                    continue;
+                }
+                String[] parts = line.split(",");
+                PriceCatcherData price = createPriceFromPriceCatcherData(parts);
+                priceList.add(price);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // System.out.println("Item Price Size: " + priceList.size());
+    }
+    
 
     private Item createItemFromLookupItem(String[] parts) {
         String itemCode = parts[0];
@@ -188,48 +185,102 @@ public class Search extends JFrame {
         return new Item(itemCode, itemName, unit, itemGroup, itemCategory);
     }
 
-    private void searchItem() {
-        SwingUtilities.invokeLater(() -> {
+    private static Premise createPremiseFromLookupPremise(String[] parts) {
+        if (parts.length >= 6) {
+            String premiseCodeString = parts[0];
+            String premiseName = parts[1];
+            String address = parts[2];
+            String premiseType = parts[3];
+            String state = parts[4];
+            String district = parts[5];
+
             try {
-                System.out.println("Search button pressed");
-    
-                String itemName = tosearch.getText().trim().toLowerCase();
-                System.out.println("Input Item Name: '" + itemName + "'"); // Print input for debugging
-                result.setText("");
-    
-                // Check if itemList is not empty
-                if (!itemList.isEmpty()) {
-                    for (Item item : itemList) {
-                        String listItemName = item.getItem().toLowerCase().trim();
-                        System.out.println("List Item Name: '" + listItemName + "'"); // Print list item name for debugging
-    
-                        if (listItemName.equals(itemName)) {
-                            result.append("Item Name: " + item.getItem() + "\n");
-                            result.append("Unit: " + item.getUnit() + "\n");
-                            result.append("Item Group: " + item.getItemGroup() + "\n");
-                            result.append("Item Category: " + item.getItemCategory() + "\n");
-                            result.append("\n");
-                            return; // Stop searching after finding the first match
-                        }
-                    }
-                }
-    
-                // If no match found
-                result.append("Item not found.");
-                result.repaint();
-            } catch (Exception e) {
-                e.printStackTrace();
+                double premiseCode = Double.parseDouble(premiseCodeString);
+                
+                int premiseCodeInt = (int) premiseCode;
+
+                premiseCodeString = String.valueOf(premiseCodeInt);
+
+                return new Premise(premiseCodeString, premiseName, address, premiseType, state, district);
+            } catch (NumberFormatException e) {
+                System.err.println("Error: Unable to parse premiseCode as a double. Setting premiseCode to null.");
+                return new Premise(null, premiseName, address, premiseType, state, district);
             }
-        });
+        } else {
+            System.err.println("Error: Insufficient elements in the parts array.");
+            return null; 
+        }
+    }
+
+
+    private static PriceCatcherData createPriceFromPriceCatcherData(String[] parts) {
+        String date = parts[0];
+        String premiseCode = parts[1];
+        String itemCode = parts[2];
+    
+        try {
+            double price = Double.parseDouble(parts[3]);
+            return new PriceCatcherData(date, premiseCode, itemCode, price);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid price format in CSV: " + parts[3]);
+            return new PriceCatcherData(date, premiseCode, itemCode, 0.0);
+        }
     }
     
-    
 
+    private void searchItem() {
+        String itemName = tosearch.getText().trim().toLowerCase();
+        String itemUnit = searchUnit.getText().trim().toLowerCase(); 
+        result.setText("");
+        System.out.println("Input Item Name: '" + itemName + "'");
+        
+        for (Item item : itemList) {
+            if (item.getItem().toLowerCase().trim().equals(itemName) && item.getUnit().toLowerCase().trim().equals(itemUnit)) {
+                String itemCode = item.getItemCode();
+                System.out.println("\nItem Code: " + itemCode);
+                result.append("Item Name: " + item.getItem() + "\n");
+                result.append("Unit: " + item.getUnit() + "\n");
+                // result.append("Item Group: " + item.getItemGroup() + "\n");
+                // result.append("Item Category: " + item.getItemCategory() + "\n");
+    
+                // Search for the associated premiseCode in the priceList
+                for (PriceCatcherData price : priceList) {    
+                    if (price.getItemCode().toLowerCase().trim().equals(itemCode)) {
+                        String premiseCode = price.getPremiseCode();
+                        // Search for details related to premiseCode in the premiseList
+                        for (Premise premise : premiseList) {
+                            if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
+                                result.append("Premise Name: " + premise.getPremise() + "\n");
+                                result.append("Address: " + premise.getAddress() + "\n");
+                                // result.append("Premise Type: " + premise.getPremiseType() + "\n");
+                                result.append("State: " + premise.getState() + "\n");
+                                result.append("District: " + premise.getDistrict() + "\n");
+                                // result.append("\n");
+                                // return;  // Stop searching after finding the first match
+                            }
+                        }
+                        result.append("Price: RM " + price.getPrice() + "0\n");
+
+
+                    }
+                }
+            }
+        }
+    
+        result.append("Item not found.");
+    }
+
+    // private void searchPrice() {
+        
+    // }
+
+    // private void searchPremise() {
+        
+    // }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             Search search = new Search();
-            search.initialize();
         });
     }
 }
