@@ -1,5 +1,3 @@
-package PRICECATCHER;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -250,7 +248,7 @@ public class Search extends JFrame {
                         // Search for details related to premiseCode in the premiseList
                         for (Premise premise : premiseList) {
                             if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
-                                result.append("Premise Name: " + premise.getPremise() + "\n");
+                                result.append("\nPremise Name: " + premise.getPremise() + "\n");
                                 result.append("Address: " + premise.getAddress() + "\n");
                                 // result.append("Premise Type: " + premise.getPremiseType() + "\n");
                                 result.append("State: " + premise.getState() + "\n");
