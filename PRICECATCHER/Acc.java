@@ -7,31 +7,29 @@ import java.awt.event.ActionListener;
 import java.sql.*;
 
 public class Acc extends JFrame {
-    final private Font font = new Font("Segoe print", Font.BOLD, 18);
-    final private Dimension dimension = new Dimension(150, 50);
-    final private Dimension maxsize = new Dimension(600, 100);
-    final private Dimension minsize = new Dimension(400, 100);
-    
+    private final Font font = new Font("Segoe print", Font.BOLD, 18);
+    private final Dimension buttonSize = new Dimension(150, 50);
+    private final Dimension maxsize = new Dimension(600, 100);
+    private final Dimension minsize = new Dimension(400, 100);
+
     private JTextField username, email, contactnum, address, city, state, poscode;
     private JPasswordField pswd;
 
     public void initialize() {
-        setTitle("Account Settings");
+        setTitle("Account Settings Page");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
         setMinimumSize(new Dimension(500, 450));
 
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Create a panel for the top section
+        // Top panel with Sign Out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
-
-        // Add the "Sign Out" button to the top panel
-        JButton signOut = new JButton("Sign Out");
-        signOut.setPreferredSize(dimension);
-        signOut.setFont(font);
-        signOut.addActionListener(new ActionListener() {
+        JButton signOutButton = new JButton("Sign Out");
+        signOutButton.setPreferredSize(buttonSize);
+        signOutButton.setFont(font);
+        signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Handle the sign-out action
@@ -42,208 +40,77 @@ public class Acc extends JFrame {
             }
         });
 
-        //form
-        JLabel modify = new JLabel("Modify Account Information", SwingConstants.CENTER);
-        modify.setFont(font);
-        main.add(modify, BorderLayout.CENTER);
-        
-        topPanel.add(signOut, BorderLayout.EAST);
+        JLabel titleLabel = new JLabel("Modify Account Information", SwingConstants.CENTER);
+        titleLabel.setFont(font);
+
+        topPanel.add(signOutButton, BorderLayout.EAST);
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        main.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        JLabel lbusername = new JLabel("Username: ");
-        lbusername.setFont(font);
-
-        username = new JTextField();
-        username.setFont(font);
-
-        JLabel lbpswd = new JLabel("Password: ");
-        lbpswd.setFont(font);
-
-        pswd = new JPasswordField();
-        pswd.setFont(font);
-
-        JLabel lbemail = new JLabel("E-mail: ");
-        lbemail.setFont(font);
-
-        email = new JTextField();
-        email.setFont(font);
-
-        JLabel lbcontactnum = new JLabel("Contact Number: ");
-        lbcontactnum.setFont(font);
-
-        contactnum = new JTextField();
-        contactnum.setFont(font);
-
-        JLabel lbaddress = new JLabel("Address: ");
-        lbaddress.setFont(font);
-
-        address = new JTextField();
-        address.setFont(font);
-
-        JLabel lbcity = new JLabel("City: ");
-        lbcity.setFont(font);
-
-        city = new JTextField();
-        city.setFont(font);
-
-        JLabel lbstate = new JLabel("State: ");
-        lbstate.setFont(font);
-
-        state = new JTextField();
-        state.setFont(font);
-
-        JLabel lbposcode = new JLabel("Poscode: ");
-        lbposcode.setFont(font);
-
-        poscode = new JTextField();
-        poscode.setFont(font);
-
-        JButton btnsave = new JButton("Save Changes");
-        btnsave.setFont(font);
-        btnsave.setPreferredSize(new Dimension(150, 40));
-        btnsave.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                update();                    
-            } 
-        });
-
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        // Form panel
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
-        formPanel.add(modify);
-        formPanel.add(lbusername);
-        formPanel.add(username);
-        formPanel.add(lbpswd);
-        formPanel.add(pswd);
-        formPanel.add(lbemail);
-        formPanel.add(email);
-        formPanel.add(lbcontactnum);
-        formPanel.add(contactnum);
-        formPanel.add(lbaddress);
-        formPanel.add(address);
-        formPanel.add(lbcity);
-        formPanel.add(city);
-        formPanel.add(lbstate);
-        formPanel.add(state);
-        formPanel.add(lbposcode);
-        formPanel.add(poscode);
 
-        add(formPanel, BorderLayout.NORTH);
-        add(btnsave, BorderLayout.SOUTH);
+        addFormField(formPanel, "Username:", username = new JTextField());
+        addFormField(formPanel, "Password:", pswd = new JPasswordField());
+        addFormField(formPanel, "E-mail:", email = new JTextField());
+        addFormField(formPanel, "Contact Number:", contactnum = new JTextField());
+        addFormField(formPanel, "Address:", address = new JTextField());
+        addFormField(formPanel, "City:", city = new JTextField());
+        addFormField(formPanel, "State:", state = new JTextField());
+        addFormField(formPanel, "Poscode:", poscode = new JTextField());
 
-        //sidebar
-        JButton home = new JButton("Home");
-        home.setPreferredSize(dimension);
-        home.setMaximumSize(maxsize);
-        home.setMinimumSize(minsize);
-        home.setFont(font);
-        home.addActionListener(new ActionListener() {
-
+        JButton saveChangesButton = new JButton("Save Changes");
+        saveChangesButton.setFont(font);
+        saveChangesButton.setPreferredSize(new Dimension(150, 40));
+        saveChangesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                System.out.println("Home button clicked");                   
-            } 
+                update();
+            }
         });
+        formPanel.add(saveChangesButton);
 
-        JButton importdata = new JButton("Import Data");
-        importdata.setPreferredSize(dimension);
-        importdata.setMaximumSize(maxsize);
-        importdata.setMinimumSize(minsize);
-        importdata.setFont(font);
-        importdata.addActionListener(new ActionListener() {
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                ImportData importData = new ImportData();
-                importData.initialize();                    
-            } 
-        });
-
-        JButton browse = new JButton("Browse by Category");
-        browse.setPreferredSize(dimension);
-        browse.setMaximumSize(maxsize);
-        browse.setMinimumSize(minsize);
-        browse.setFont(font);
-        browse.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                Browse browse = new Browse();
-                browse.initialize();                    
-            } 
-        });
-
-        JButton search = new JButton("Search for Product");
-        search.setPreferredSize(dimension);
-        search.setMaximumSize(maxsize);
-        search.setMinimumSize(minsize);
-        search.setFont(font);
-        search.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                Search Btnbrowse = new Search();
-                Btnbrowse.initialize();                    
-            } 
-        });
-
-        JButton cart = new JButton("View Shopping Cart");
-        cart.setPreferredSize(dimension);
-        cart.setMaximumSize(maxsize);
-        cart.setMinimumSize(minsize);
-        cart.setFont(font);
-        cart.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                Cart btnCart = new Cart();
-                btnCart.initialize();                    
-            } 
-        });
-
-        JButton acc = new JButton("Account Settings");
-        acc.setPreferredSize(dimension);
-        acc.setMaximumSize(maxsize);
-        acc.setMinimumSize(minsize);
-        acc.setFont(font);
-        acc.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                Acc btnAcc = new Acc();
-                btnAcc.initialize();                    
-            } 
-        });
-
+        // Sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        sidebar.add(home);
-        sidebar.add(importdata);
-        sidebar.add(browse);
-        sidebar.add(search);
-        sidebar.add(cart);
-        sidebar.add(acc);
+        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, formPanel);
+        for (String label : buttonLabels) {
+            JButton button = new JButton(label);
+            button.setPreferredSize(buttonSize);
+            button.setMaximumSize(maxsize);
+            button.setMinimumSize(minsize);
+            button.setFont(font);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    btnClick(label);
+                }
+            });
+            sidebar.add(button);
+        }
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
-        
-        add(splitPane);
+
+        setContentPane(splitPane);
 
         setLocationRelativeTo(null);
         setVisible(true);
     }
-    
+
+    private void addFormField(JPanel panel, String label, JComponent component) {
+        JLabel fieldLabel = new JLabel(label);
+        fieldLabel.setFont(font);
+        panel.add(fieldLabel);
+        panel.add(component);
+    }
+
     private void update() {
         String Username = username.getText();
         String Password = new String(pswd.getPassword());
@@ -253,7 +120,7 @@ public class Acc extends JFrame {
         String City = city.getText();
         String State = state.getText();
         String Poscode = poscode.getText();
-
+        
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
             String query = "UPDATE `user` SET `password`=?, `email`=?, `contactnum`=?, `address`=?, `city`=?, `state`=?, `poscode`=? WHERE `username`=?";
@@ -270,16 +137,39 @@ public class Acc extends JFrame {
             int rowsAffected = pS.executeUpdate();
 
             if (rowsAffected > 0) {
-                System.out.println("User information updated successfully.");
+                JOptionPane.showMessageDialog(Acc.this, "Account details updated successfully", "Acc", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                System.out.println("No user found with the specified username.");
+                JOptionPane.showMessageDialog(Acc.this, "No user found with the specified username.", "Acc", JOptionPane.INFORMATION_MESSAGE);
             }
-
+        
             pS.close();
             connection.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database error. Please try again.");
+        }
+    }
+
+    private void btnClick(String label) {
+        switch (label) {
+            case "Home":
+                new MainFrame().initialize();
+                break;
+            case "Import Data":
+                new ImportData().initialize();
+                break;
+            case "Browse by Category":
+                new Browse().initialize();
+                break;
+            case "Search for Product":
+                new Search().initialize();
+                break;
+            case "View Shopping Cart":
+                new Cart().initialize();
+                break;
+            case "Account Settings":
+                JOptionPane.showMessageDialog(this, "Account Settings button clicked", "Account Settings", JOptionPane.INFORMATION_MESSAGE);
+                break;
         }
     }
 

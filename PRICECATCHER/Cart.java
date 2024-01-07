@@ -24,7 +24,7 @@ public class Cart extends MainFrame {
     }
 
     private void connectToDatabase() {
-        String url = "jdbc:mysql://localhost:3306/cart";
+        String url = "jdbc:mysql://localhost:3306/pricecatcher";
         String username = "sqluser";
         String password = "welcome1";
 
@@ -38,7 +38,7 @@ public class Cart extends MainFrame {
 
     private void loadCartData() {
         try {
-            String query = "SELECT item, unit, quantity, price FROM cart";
+            String query = "SELECT item_code, unit, quantity, price FROM cart";
             ResultSet resultSet = statement.executeQuery(query);
 
             tableModel.setRowCount(0);
@@ -60,7 +60,7 @@ public class Cart extends MainFrame {
 
     public void initialize() {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(800, 600);
+        setSize(1000, 900);
         setLocationRelativeTo(null);
 
         JPanel mainPanel = new JPanel(new GridBagLayout());
