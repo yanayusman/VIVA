@@ -1,3 +1,5 @@
+package PRICECATCHER;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -9,6 +11,8 @@ import java.io.*;
 
 public class Search extends JFrame {
     final private Font font = new Font("Segoe print", Font.BOLD, 18);
+    final private Dimension dimension = new Dimension(150, 50);
+    
     private JTextField tosearch;
     private JTextField searchUnit;
     private JTextArea result;
@@ -41,6 +45,32 @@ public class Search extends JFrame {
         // main content
         JPanel main = new JPanel(new BorderLayout());
         main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+
+        // Create a panel for the top section
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        // Add the "Sign Out" button to the top panel
+        JButton signOut = new JButton("Sign Out");
+        signOut.setPreferredSize(dimension);
+        signOut.setFont(font);
+        signOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Handle the sign-out action
+                JOptionPane.showMessageDialog(Search.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
+                Login loginForm = new Login();
+                loginForm.initialize();
+            }
+        });
+
+        //add the "Sign Out" button to the top panel
+        topPanel.add(signOut, BorderLayout.EAST);
+        
+        //separator
+        topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+
+        //add the top panel to the main panel
+        main.add(topPanel, BorderLayout.NORTH);
     
         JLabel lmain = new JLabel("Looking for an Item? Search now!");
         lmain.setFont(new Font("Segoe print", Font.BOLD, 30));
@@ -77,10 +107,7 @@ public class Search extends JFrame {
         btnSearch.addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e){
-                // System.out.println("Search button pressed");
                 searchItem();
-                // searchPrice();
-                // searchPremise();
             }
         });
         
@@ -123,9 +150,7 @@ public class Search extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
-        // System.out.println("Item List Size: " + itemList.size()); 
-    }
+        }
 
     private void loadItemPremise() {
         String file = "lookup_premise.csv";
@@ -149,7 +174,6 @@ public class Search extends JFrame {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    //     System.out.println("Item Premise Size: " + premiseList.size());
     }
 
     private void loadItemPrice() {
@@ -170,7 +194,6 @@ public class Search extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // System.out.println("Item Price Size: " + priceList.size());
     }
     
 
@@ -238,8 +261,6 @@ public class Search extends JFrame {
                 System.out.println("\nItem Code: " + itemCode);
                 result.append("Item Name: " + item.getItem() + "\n");
                 result.append("Unit: " + item.getUnit() + "\n");
-                // result.append("Item Group: " + item.getItemGroup() + "\n");
-                // result.append("Item Category: " + item.getItemCategory() + "\n");
     
                 // Search for the associated premiseCode in the priceList
                 for (PriceCatcherData price : priceList) {    
@@ -250,11 +271,8 @@ public class Search extends JFrame {
                             if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
                                 result.append("\nPremise Name: " + premise.getPremise() + "\n");
                                 result.append("Address: " + premise.getAddress() + "\n");
-                                // result.append("Premise Type: " + premise.getPremiseType() + "\n");
                                 result.append("State: " + premise.getState() + "\n");
                                 result.append("District: " + premise.getDistrict() + "\n");
-                                // result.append("\n");
-                                // return;  // Stop searching after finding the first match
                             }
                         }
                         result.append("Price: RM " + price.getPrice() + "0\n");
@@ -267,14 +285,6 @@ public class Search extends JFrame {
     
         result.append("Item not found.");
     }
-
-    // private void searchPrice() {
-        
-    // }
-
-    // private void searchPremise() {
-        
-    // }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

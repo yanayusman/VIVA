@@ -11,6 +11,7 @@ public class Acc extends JFrame {
     final private Dimension dimension = new Dimension(150, 50);
     final private Dimension maxsize = new Dimension(600, 100);
     final private Dimension minsize = new Dimension(400, 100);
+    
     private JTextField username, email, contactnum, address, city, state, poscode;
     private JPasswordField pswd;
 
@@ -20,9 +21,36 @@ public class Acc extends JFrame {
         setSize(1000, 900);
         setMinimumSize(new Dimension(500, 450));
 
+        JPanel main = new JPanel(new BorderLayout());
+        main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+
+        // Create a panel for the top section
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        // Add the "Sign Out" button to the top panel
+        JButton signOut = new JButton("Sign Out");
+        signOut.setPreferredSize(dimension);
+        signOut.setFont(font);
+        signOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Handle the sign-out action
+                JOptionPane.showMessageDialog(Acc.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+                Login loginForm = new Login();
+                loginForm.initialize();
+            }
+        });
+
         //form
         JLabel modify = new JLabel("Modify Account Information", SwingConstants.CENTER);
         modify.setFont(font);
+        main.add(modify, BorderLayout.CENTER);
+        
+        topPanel.add(signOut, BorderLayout.EAST);
+        topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+
+        main.add(topPanel, BorderLayout.NORTH);
 
         JLabel lbusername = new JLabel("Username: ");
         lbusername.setFont(font);
@@ -104,7 +132,6 @@ public class Acc extends JFrame {
         formPanel.add(state);
         formPanel.add(lbposcode);
         formPanel.add(poscode);
-        formPanel.add(btnsave);
 
         add(formPanel, BorderLayout.NORTH);
         add(btnsave, BorderLayout.SOUTH);
@@ -210,7 +237,7 @@ public class Acc extends JFrame {
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, formPanel);
         splitPane.setDividerLocation(220);
-
+        
         add(splitPane);
 
         setLocationRelativeTo(null);

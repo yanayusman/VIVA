@@ -19,10 +19,37 @@ public class MainFrame extends JFrame {
         JPanel main = new JPanel(new BorderLayout());
         main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
+        // Create a panel for the top section
+        JPanel topPanel = new JPanel(new BorderLayout());
+
+        // Add the "Sign Out" button to the top panel
+        JButton signOut = new JButton("Sign Out");
+        signOut.setPreferredSize(dimension);
+        signOut.setFont(font);
+        signOut.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Handle the sign-out action
+                JOptionPane.showMessageDialog(MainFrame.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
+                Login loginForm = new Login();
+                loginForm.initialize();
+            }
+        });
+
         JLabel lmain = new JLabel("Welcome to Price Checker!");
         lmain.setFont(new Font("Segoe print", Font.BOLD, 30));
         lmain.setHorizontalAlignment(JLabel.CENTER);
         main.add(lmain, BorderLayout.CENTER);
+
+        
+        //add the "Sign Out" button to the top panel
+        topPanel.add(signOut, BorderLayout.EAST);
+        
+        //separator
+        topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+
+        //add the top panel to the main panel
+        main.add(topPanel, BorderLayout.NORTH);
 
         JButton home = new JButton("Home");
         home.setPreferredSize(dimension);
@@ -34,7 +61,7 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent arg0) {
                 // TODO Auto-generated method stub
-                System.out.println("Home button clicked");                   
+                JOptionPane.showMessageDialog(MainFrame.this, "Home button clicked", "Home", JOptionPane.INFORMATION_MESSAGE);
             } 
         });
 
@@ -138,103 +165,3 @@ public class MainFrame extends JFrame {
         });
     }
 }
-
-// import javax.swing.*;
-// import java.awt.*;
-// import java.awt.event.ActionEvent;
-// import java.awt.event.ActionListener;
-
-// public class MainFrame extends JFrame {
-//     final private Font font = new Font("Segoe print", Font.BOLD, 18);
-//     final private Dimension dimension = new Dimension(150, 50);
-//     final private Dimension maxsize = new Dimension(600, 100);
-//     final private Dimension minsize = new Dimension(400, 100);
-
-//     private JPanel mainPanel;
-//     private JPanel importDataPanel;
-//     private JPanel browsePanel;
-//     private JPanel searchPanel;
-//     private JPanel cartPanel;
-//     private JPanel accPanel;
-
-//     private CardLayout cardLayout;
-
-//     public void initialize() {
-//         setTitle("Main Page");
-//         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-//         setSize(1000, 900);
-
-//         // Initialize panels for different pages
-//         mainPanel = new JPanel(new BorderLayout());
-//         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
-
-//         importDataPanel = new ImportData().initialize();
-//         browsePanel = new Browse().initialize();
-//         searchPanel = new Search().initialize();
-//         cartPanel = new Cart().initialize();
-//         accPanel = new Acc().initialize();
-
-//         // Set up CardLayout
-//         cardLayout = new CardLayout();
-//         setLayout(cardLayout);
-
-//         // Add panels to the frame with unique names
-//         add(mainPanel, "mainPanel");
-//         add(importDataPanel, "importDataPanel");
-//         add(browsePanel, "browsePanel");
-//         add(searchPanel, "searchPanel");
-//         add(cartPanel, "cartPanel");
-//         add(accPanel, "accPanel");
-
-//         // Show the main panel initially
-//         cardLayout.show(this.getContentPane(), "mainPanel");
-
-//         // Create buttons with actions
-//         JButton home = createButton("Home", "mainPanel");
-//         JButton importdata = createButton("Import Data", "importDataPanel");
-//         JButton browse = createButton("Browse by Category", "browsePanel");
-//         JButton search = createButton("Search for Product", "searchPanel");
-//         JButton cart = createButton("View Shopping Cart", "cartPanel");
-//         JButton acc = createButton("Account Settings", "accPanel");
-        
-
-//         JPanel sidebar = new JPanel();
-//         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-//         sidebar.add(home);
-//         sidebar.add(importdata);
-//         sidebar.add(browse);
-//         sidebar.add(search);
-//         sidebar.add(cart);
-//         sidebar.add(acc);
-
-//         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
-//         splitPane.setDividerLocation(250);
-
-//         add(splitPane);
-
-//         setLocationRelativeTo(null);
-//         setVisible(true);
-//     }
-
-//     private JButton createButton(String buttonText, String panelName) {
-//         JButton button = new JButton(buttonText);
-//         button.setPreferredSize(dimension);
-//         button.setMaximumSize(maxsize);
-//         button.setMinimumSize(minsize);
-//         button.setFont(font);
-//         button.addActionListener(new ActionListener() {
-//             @Override
-//             public void actionPerformed(ActionEvent arg0) {
-//                 cardLayout.show(getContentPane(), panelName);
-//             }
-//         });
-//         return button;
-//     }
-
-//     public static void main(String[] args) {
-//         SwingUtilities.invokeLater(() -> {
-//             MainFrame main = new MainFrame();
-//             main.initialize();
-//         });
-//     }
-// }
