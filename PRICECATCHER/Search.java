@@ -159,6 +159,7 @@ public class Search extends JFrame {
                 new Browse().initialize();
                 break;
             case "Search for Product":
+                // JOptionPane.showMessageDialog(this, "Search button clicked", "Search", JOptionPane.INFORMATION_MESSAGE);
                 initialize();
                 break;
             case "View Shopping Cart":
@@ -190,7 +191,7 @@ public class Search extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        }
+    }
 
     private void loadItemPremise() {
         String file = "lookup_premise.csv";

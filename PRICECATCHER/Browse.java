@@ -4,137 +4,172 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.*;
+import java.util.List;
 
 public class Browse extends JFrame {
+    private final Font font = new Font("Segoe print", Font.BOLD, 18);
+    private final Dimension buttonSize = new Dimension(150, 50);
+    private final Dimension maxsize = new Dimension(600, 100);
+    private final Dimension minsize = new Dimension(400, 100);
+    private final String filename = "lookup_item.csv";
 
-    private Font font = new Font("Segoe Print", Font.BOLD, 18);
+    public Browse() {
+        initialize();
+    }
 
-    public JPanel initialize() {
-        setTitle("Browse Page");
+    public void initialize() {
+        setTitle("Browse page");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
-    
-        // main content
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
-    
-        JLabel lmain = new JLabel("Browse by Category");
-        lmain.setFont(new Font("Segoe print", Font.BOLD, 30));
-        lmain.setHorizontalAlignment(JLabel.CENTER);
-        main.add(lmain, BorderLayout.CENTER);
-    
-        JButton brgBungkus = new JButton();
-        brgBungkus.setFont(font);
-        brgBungkus.setPreferredSize(new Dimension(150, 10));
-        brgBungkus.addActionListener(new ActionListener(){
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+
+        // Top panel with Sign Out button and title
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JButton signOutButton = new JButton("Sign Out");
+        signOutButton.setPreferredSize(buttonSize);
+        signOutButton.setFont(font);
+        signOutButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgBungkus brgbungkus = new BrgBungkus();
-                // brgbungkus.initialize();
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                // Handle the sign-out action
+                JOptionPane.showMessageDialog(Browse.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
+                Login loginForm = new Login();
+                loginForm.initialize();
             }
         });
 
-        JButton brgSerbaneka = new JButton();
-        brgSerbaneka.setFont(font);
-        brgSerbaneka.setPreferredSize(new Dimension(150, 10));
-        brgSerbaneka.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgSerbaneka brgserbaneka = new BrgSerbaneka();
-                // brgserbaneka.initialize();
-            }
-        });
+        JLabel titleLabel = new JLabel("Browse by Categories", SwingConstants.CENTER);
+        titleLabel.setFont(font);
 
-        JButton brgKering = new JButton();
-        brgKering.setFont(font);
-        brgKering.setPreferredSize(new Dimension(150, 10));
-        brgKering.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgKering brgkering = new BrgKering();
-                // brgkering.initialize();
-            }
-        });
+        topPanel.add(signOutButton, BorderLayout.EAST);
+        topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        JButton brgSegar = new JButton();
-        brgSegar.setFont(font);
-        brgSegar.setPreferredSize(new Dimension(150, 10));
-        brgSegar.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgSegar brgsegar = new BrgSegar();
-                // brgsegar.initialize();
-            }
-        });
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        JButton brgSiapMasak = new JButton();
-        brgSiapMasak.setFont(font);
-        brgSiapMasak.setPreferredSize(new Dimension(150, 10));
-        brgSiapMasak.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgSiapMasak brgsiapmasak = new BrgSiapMasak();
-                // brgsiapmasak.initialize();
-            }
-        });
+        // Load groups from CSV file
+        List<String> groups = getGroups();
 
-        JButton minuman = new JButton();
-        minuman.setFont(font);
-        minuman.setPreferredSize(new Dimension(150, 10));
-        minuman.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // Minuman minum = new Minuman();
-                // minum.initialize();
-            }
-        });
+        // Group buttons
+        JPanel groupPanel = new JPanel();
+        groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
+        groupPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
 
-        JButton produk = new JButton();
-        produk.setFont(font);
-        produk.setPreferredSize(new Dimension(150, 10));
-        produk.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // Produk produk = new Produk();
-                // produk.initialize();
-            }
-        });
+        for (String group : groups) {
+            JButton groupButton = createGroupBtn(group);
+            groupPanel.add(Box.createVerticalStrut(20));
+            groupPanel.add(groupButton);
+        }
 
-        JButton brgBayi = new JButton();
-        brgBayi.setFont(font);
-        brgBayi.setPreferredSize(new Dimension(150, 10));
-        brgBayi.addActionListener(new ActionListener(){
-            @Override
-            public void actionPerformed(ActionEvent e){
-                // BrgBayi brgbayi = new BrgBayi();
-                // brgbayi.initialize();
-            }
-        });
+        mainPanel.add(groupPanel, BorderLayout.CENTER);
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100)); 
-        formPanel.add(lmain);
-        formPanel.add(brgBungkus); 
-        formPanel.add(brgSerbaneka);
-        formPanel.add(brgKering); 
-        formPanel.add(brgSegar);
-        formPanel.add(brgSiapMasak);
-        formPanel.add(minuman); 
-        formPanel.add(produk);
-        formPanel.add(brgBayi);
+        // Sidebar
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        for (String label : buttonLabels) {
+            JButton button = new JButton(label);
+            button.setPreferredSize(buttonSize);
+            button.setMaximumSize(maxsize);
+            button.setMinimumSize(minsize);
+            button.setFont(font);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    btnClick(label);
+                }
+            });
+            sidebar.add(button);
+        }
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
+        splitPane.setDividerLocation(220);
+
+        setContentPane(splitPane);
 
         setLocationRelativeTo(null);
         setVisible(true);
-        return main;
     }
-    
+
+    private JButton createGroupBtn(String groupName) {
+        JButton button = new JButton(groupName);
+        button.setFont(font);
+        button.setPreferredSize(buttonSize);
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ItemCategoryFrame itemCategoryFrame = new ItemCategoryFrame(groupName);
+                itemCategoryFrame.initialize();
+            }
+        });
+        return button;
+    }
+
+    private void btnClick(String label) {
+        switch (label) {
+            case "Home":
+                new MainFrame().initialize();
+                break;
+            case "Import Data":
+                new ImportData().initialize();
+                break;
+            case "Browse by Category":
+                initialize();
+                break;
+            case "Search for Product":
+                new Search().initialize();
+                break;
+            case "View Shopping Cart":
+                new Cart().initialize();
+                break;
+            case "Account Settings":
+                new Acc().initialize();
+                break;
+        }
+    }
+
+    private List<String> getGroups() {
+        Set<String> groupSet = new HashSet<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            int lineCount = 0;
+
+            while ((line = reader.readLine()) != null) {
+                lineCount++;
+                if (lineCount <= 2) {
+                    // Skip the 1st and 2nd lines
+                    continue;
+                }
+
+                String[] parts = line.split(",");
+                if (parts.length >= 5) {
+                    String groups = parts[3].trim();
+                    if (!groups.isEmpty() && !groups.equals("1kg")) {
+                        groupSet.add(groups);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Convert the set to a sorted list
+        List<String> groupList = new ArrayList<>(groupSet);
+        Collections.sort(groupList);
+
+        return groupList;
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Search search = new Search();
+            new Browse();
         });
     }
 }
