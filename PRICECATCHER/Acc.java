@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import java.util.HashMap;
 
 public class Acc extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -14,6 +15,10 @@ public class Acc extends JFrame {
 
     private JTextField username, email, contactnum, address, city, state, poscode;
     private JPasswordField pswd;
+
+    public Acc() {
+        initialize();
+    }
 
     public void initialize() {
         setTitle("Account Settings Page");
@@ -121,8 +126,7 @@ public class Acc extends JFrame {
         String State = state.getText();
         String Poscode = poscode.getText();
         
-        try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1")){
             String query = "UPDATE `user` SET `password`=?, `email`=?, `contactnum`=?, `address`=?, `city`=?, `state`=?, `poscode`=? WHERE `username`=?";
             PreparedStatement pS = connection.prepareStatement(query);
             pS.setString(1, Password);
@@ -168,15 +172,14 @@ public class Acc extends JFrame {
                 new Cart().initialize();
                 break;
             case "Account Settings":
-                JOptionPane.showMessageDialog(this, "Account Settings button clicked", "Account Settings", JOptionPane.INFORMATION_MESSAGE);
+                initialize();
                 break;
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Acc acc = new Acc();
-            acc.initialize();
+            new Acc();
         });
     }
 }

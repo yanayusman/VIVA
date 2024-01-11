@@ -6,12 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.io.*;
 
 public class Search extends JFrame {
-    final private Font font = new Font("Segoe print", Font.BOLD, 18);
-    final private Dimension dimension = new Dimension(150, 50);
+    private final Font font = new Font("Segoe print", Font.BOLD, 18);
+    private final Dimension dimension = new Dimension(150, 50);
+    private final Dimension maxSize = new Dimension(600, 100);
+    private final Dimension minSize = new Dimension(400, 100);
     
     private JTextField tosearch;
     private JTextField searchUnit;
@@ -19,6 +21,7 @@ public class Search extends JFrame {
     private List<Item> itemList;
     private List<Premise> premiseList;
     private List<PriceCatcherData> priceList;
+    private String username;
     private String itemCode;
     private String premiseCode;
     private String itemUnit;
@@ -46,88 +49,125 @@ public class Search extends JFrame {
         JPanel main = new JPanel(new BorderLayout());
         main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Create a panel for the top section
+        //top panel with signout button and title 
         JPanel topPanel = new JPanel(new BorderLayout());
-
-        // Add the "Sign Out" button to the top panel
         JButton signOut = new JButton("Sign Out");
         signOut.setPreferredSize(dimension);
         signOut.setFont(font);
         signOut.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the sign-out action
                 JOptionPane.showMessageDialog(Search.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
                 Login loginForm = new Login();
                 loginForm.initialize();
             }
         });
 
-        //add the "Sign Out" button to the top panel
+        JLabel titleLabel = new JLabel("Looking for an Item? Search now!", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
+
         topPanel.add(signOut, BorderLayout.EAST);
-        
-        //separator
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
+        topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        //add the top panel to the main panel
         main.add(topPanel, BorderLayout.NORTH);
-    
-        JLabel lmain = new JLabel("Looking for an Item? Search now!");
-        lmain.setFont(new Font("Segoe print", Font.BOLD, 30));
-        lmain.setHorizontalAlignment(JLabel.CENTER);
-        main.add(lmain, BorderLayout.CENTER);
 
-        JLabel lname = new JLabel("Item Name: ");
-        lname.setFont(new Font("Segoe print", Font.BOLD, 25));
-        lname.setHorizontalAlignment(JLabel.CENTER);
-        main.add(lname, BorderLayout.CENTER);
-
-        JLabel lunit = new JLabel("Item Unit: ");
-        lunit.setFont(new Font("Segoe print", Font.BOLD, 25));
-        lunit.setHorizontalAlignment(JLabel.CENTER);
-        main.add(lunit, BorderLayout.CENTER);
+        //form panel
+        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
 
         tosearch = new JTextField();
-        tosearch.setHorizontalAlignment(JLabel.CENTER);
-        main.add(tosearch, BorderLayout.CENTER);
         tosearch.setFont(font);
+        tosearch.setPreferredSize(new Dimension(150, 40)); 
+        addFormField(formPanel, "Item Name:", tosearch);
 
         searchUnit = new JTextField();
-        searchUnit.setHorizontalAlignment(JLabel.CENTER);
-        main.add(searchUnit, BorderLayout.CENTER);
         searchUnit.setFont(font);
+        searchUnit.setPreferredSize(new Dimension(90, 20));
+        addFormField(formPanel, "Item Unit:", searchUnit);
+
 
         result = new JTextArea(10, 30);
-        main.add(result, BorderLayout.CENTER);
         result.setFont(font);
 
-        JButton btnSearch = new JButton("Search");
-        btnSearch.setFont(font);
-        btnSearch.setPreferredSize(new Dimension(150, 10));
-        btnSearch.addActionListener(new ActionListener(){
+        JScrollPane resultScrollPane = new JScrollPane(result);
+        resultScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        resultScrollPane.setPreferredSize(new Dimension(900, 600));
+
+        main.add(resultScrollPane, BorderLayout.SOUTH);
+
+        JButton searchbtn = new JButton("Search");
+        searchbtn.setFont(font);
+        searchbtn.setPreferredSize(dimension);
+        searchbtn.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
+            public void actionPerformed(ActionEvent arg0) {
                 searchItem();
             }
         });
+        formPanel.add(searchbtn);
+
+        main.add(formPanel, BorderLayout.CENTER);
+
+        // Sidebar
+        JPanel sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
+
+        for (String label : buttonLabels) {
+            JButton button = new JButton(label);
+            button.setPreferredSize(dimension);
+            button.setMaximumSize(maxSize);
+            button.setMinimumSize(minSize);
+            button.setFont(font);
+            button.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent arg0) {
+                    btnClick(label);
+                }
+            });
+            sidebar.add(button);
+        }
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, main);
+        splitPane.setDividerLocation(220);
+
         
-
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100)); 
-        formPanel.add(lmain);
-        formPanel.add(lname); 
-        formPanel.add(tosearch);
-        formPanel.add(lunit); 
-        formPanel.add(searchUnit);
-        formPanel.add(btnSearch);
-
-        add(formPanel, BorderLayout.NORTH);
-        getContentPane().add(formPanel, "North");
-        getContentPane().add(new JScrollPane(result), "Center");
+        setContentPane(splitPane);
 
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void addFormField(JPanel panel, String label, JComponent component) {
+        JLabel fieldLabel = new JLabel(label);
+        fieldLabel.setFont(font);
+        panel.add(fieldLabel);
+        panel.add(component);
+        component.setPreferredSize(dimension);
+    }
+
+    private void btnClick(String label) {
+        switch (label) {
+            case "Home":
+                new MainFrame().initialize();
+                break;
+            case "Import Data":
+                new ImportData().initialize();
+                break;
+            case "Browse by Category":
+                new Browse().initialize();
+                break;
+            case "Search for Product":
+                initialize();
+                break;
+            case "View Shopping Cart":
+                new Cart().initialize();
+                break;
+            case "Account Settings":
+                new Acc().initialize();
+                break;
+        }
     }
 
     private void loadItemData() {
@@ -248,47 +288,60 @@ public class Search extends JFrame {
         }
     }
     
-
     private void searchItem() {
         String itemName = tosearch.getText().trim().toLowerCase();
-        String itemUnit = searchUnit.getText().trim().toLowerCase(); 
-        result.setText("");
+        String itemUnit = searchUnit.getText().trim().toLowerCase();
+        result.setText(""); 
         System.out.println("Input Item Name: '" + itemName + "'");
-        
+    
+        boolean itemFound = false;
+    
         for (Item item : itemList) {
             if (item.getItem().toLowerCase().trim().equals(itemName) && item.getUnit().toLowerCase().trim().equals(itemUnit)) {
+                itemFound = true;
                 String itemCode = item.getItemCode();
                 System.out.println("\nItem Code: " + itemCode);
                 result.append("Item Name: " + item.getItem() + "\n");
                 result.append("Unit: " + item.getUnit() + "\n");
     
-                // Search for the associated premiseCode in the priceList
-                for (PriceCatcherData price : priceList) {    
+                // Create a list to store prices for the current item
+                List<PriceCatcherData> pricesForItem = new ArrayList<>();
+    
+                for (PriceCatcherData price : priceList) {
                     if (price.getItemCode().toLowerCase().trim().equals(itemCode)) {
-                        String premiseCode = price.getPremiseCode();
-                        // Search for details related to premiseCode in the premiseList
-                        for (Premise premise : premiseList) {
-                            if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
-                                result.append("\nPremise Name: " + premise.getPremise() + "\n");
-                                result.append("Address: " + premise.getAddress() + "\n");
-                                result.append("State: " + premise.getState() + "\n");
-                                result.append("District: " + premise.getDistrict() + "\n");
-                            }
-                        }
-                        result.append("Price: RM " + price.getPrice() + "0\n");
-
-
+                        pricesForItem.add(price);
                     }
+                }
+    
+                // Sort prices in ascending order
+                Collections.sort(pricesForItem, (p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
+    
+                for (PriceCatcherData sortedPrice : pricesForItem) {
+                    String premiseCode = sortedPrice.getPremiseCode();
+    
+                    for (Premise premise : premiseList) {
+                        if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
+                            result.append("\nPremise Name: " + premise.getPremise() + "\n");
+                            result.append("Address: " + premise.getAddress() + "\n");
+                            result.append("State: " + premise.getState() + "\n");
+                            result.append("District: " + premise.getDistrict() + "\n");
+                        }
+                    }
+                    result.append("Price: RM " + sortedPrice.getPrice() + "0\n");
                 }
             }
         }
     
-        result.append("Item not found.");
+        if (!itemFound) {
+            result.append("Item not found.");
+        }
     }
+    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            Search search = new Search();
+            new Search();
         });
     }
 }
+

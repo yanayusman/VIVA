@@ -7,9 +7,13 @@ import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame {
     final private Font font = new Font("Segoe print", Font.BOLD, 18);
-    final private Dimension buttonSize = new Dimension(150, 50);
+    final private Dimension dimension = new Dimension(150, 50);
     final private Dimension maxSize = new Dimension(600, 100);
     final private Dimension minSize = new Dimension(400, 100);
+
+    public MainFrame() {
+        initialize();
+    }
 
     public void initialize() {
         setTitle("Main Page");
@@ -22,7 +26,7 @@ public class MainFrame extends JFrame {
         // Top panel with Sign Out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
-        signOutButton.setPreferredSize(buttonSize);
+        signOutButton.setPreferredSize(dimension);
         signOutButton.setFont(font);
         signOutButton.addActionListener(new ActionListener() {
             @Override
@@ -49,7 +53,7 @@ public class MainFrame extends JFrame {
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
-            button.setPreferredSize(buttonSize);
+            button.setPreferredSize(dimension);
             button.setMaximumSize(maxSize);
             button.setMinimumSize(minSize);
             button.setFont(font);
@@ -67,6 +71,7 @@ public class MainFrame extends JFrame {
 
         add(splitPane);
 
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -74,7 +79,7 @@ public class MainFrame extends JFrame {
     private void handleSidebarButtonClick(String label) {
         switch (label) {
             case "Home":
-                JOptionPane.showMessageDialog(this, "Home button clicked", "Home", JOptionPane.INFORMATION_MESSAGE);
+                initialize();
                 break;
             case "Import Data":
                 new ImportData().initialize();
@@ -96,8 +101,7 @@ public class MainFrame extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            MainFrame mainFrame = new MainFrame();
-            mainFrame.initialize();
+            new MainFrame();
         });
     }
 }

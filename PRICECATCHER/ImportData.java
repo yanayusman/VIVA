@@ -19,6 +19,10 @@ public class ImportData extends JFrame {
 
     private JTextField selectedFilePath;
 
+    public ImportData() {
+        initialize();
+    }
+
     public void initialize() {
         setTitle("Import Data Page");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -118,6 +122,7 @@ public class ImportData extends JFrame {
 
         // Set up the frame
         setContentPane(splitPane);
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -139,7 +144,7 @@ public class ImportData extends JFrame {
                 new MainFrame().initialize();
                 break;
             case "Import Data":
-                JOptionPane.showMessageDialog(this, "Import Data button clicked", "Import Data", JOptionPane.INFORMATION_MESSAGE);
+                initialize();
                 break;
             case "Browse by Category":
                 new Browse().initialize();
@@ -208,8 +213,7 @@ public class ImportData extends JFrame {
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            ImportData importData = new ImportData();
-            importData.initialize();
+            new ImportData();
         });
     }
 }
