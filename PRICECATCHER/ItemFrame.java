@@ -93,7 +93,7 @@ public class ItemFrame extends JFrame {
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(dimension);
         backButton.setFont(font);
-        backButton.addActionListener(e -> dispose()); // Close the current frame
+        backButton.addActionListener(e -> dispose());
     
         // Bottom panel with Back button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));

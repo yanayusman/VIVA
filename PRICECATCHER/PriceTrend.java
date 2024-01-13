@@ -95,7 +95,7 @@ public class PriceTrend extends JFrame {
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
         backButton.setFont(font);
-        backButton.addActionListener(e -> dispose()); // Close the current frame
+        backButton.addActionListener(e -> dispose()); 
 
         bottomPanel.add(backButton);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);

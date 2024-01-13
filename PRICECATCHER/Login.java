@@ -29,6 +29,10 @@ public class Login extends JFrame{
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
         //form panel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
+        
         JLabel lblogin = new JLabel("Login Form", SwingConstants.CENTER);
         lblogin.setFont(mainFont);
 
@@ -57,9 +61,6 @@ public class Login extends JFrame{
                     }
                 });
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new GridLayout(0, 1, 10, 10));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
         formPanel.add(lblogin);
         formPanel.add(lbusername);
         formPanel.add(tfusername);
@@ -106,6 +107,7 @@ public class Login extends JFrame{
         add(formPanel, BorderLayout.NORTH);
 
         setMinimumSize(new Dimension(500, 450));
+
         setLocationRelativeTo(null);
         setVisible(true);
     }

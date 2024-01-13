@@ -39,7 +39,6 @@ public class Acc extends JFrame {
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the sign-out action
                 JOptionPane.showMessageDialog(Acc.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 new Login();

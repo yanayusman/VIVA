@@ -420,7 +420,7 @@ public class ItemTable extends JFrame {
 
     private static PriceCatcherData createPriceFromPriceCatcherData(String[] parts) {
         String date = parts[0];
-        String premiseCode = parts[1] + parts[2];  // Concatenate with item code
+        String premiseCode = parts[1];
         String itemCode = parts[2];
     
         try {

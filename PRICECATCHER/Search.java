@@ -4,58 +4,38 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.io.*;
 
 public class Search extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
-    private final Dimension dimension = new Dimension(150, 50);
-    private final Dimension maxSize = new Dimension(600, 100);
-    private final Dimension minSize = new Dimension(400, 100);
-    
-    private JTextField tosearch;
-    private JTextField searchUnit;
-    private JTextArea result;
-    private List<Item> itemList;
-    private List<Premise> premiseList;
-    private List<PriceCatcherData> priceList;
+    private final Dimension buttonSize = new Dimension(200, 50);
+    private final Dimension maxsize = new Dimension(600, 100);
+    private final Dimension minsize = new Dimension(400, 100);
+
+    private JTextField itemNameField;
+    private JTextField unitField;
+    private JButton showTableButton;
     private String username;
-    private String itemCode;
-    private String premiseCode;
-    private String itemUnit;
 
-    public Search(String username){
-        itemList = new ArrayList<>();
-        priceList = new ArrayList<>();
-        premiseList = new ArrayList<>();
-
+    public Search(String username) {
         this.username = username;
-        this.itemCode = null;
-        this.premiseCode = null;
 
         initialize();
-        loadItemData();
-        loadItemPrice();
-        loadItemPremise();
     }
 
-    public void initialize() {
+    private void initialize() {
         setTitle("Search Page - " + username);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
-    
-        // main content
-        JPanel main = new JPanel(new BorderLayout());
-        main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        //top panel with signout button and title 
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+
+        // Top panel with Sign Out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
-        JButton signOut = new JButton("Sign Out");
-        signOut.setPreferredSize(dimension);
-        signOut.setFont(font);
-        signOut.addActionListener(new ActionListener() {
+        JButton signOutButton = new JButton("Sign Out");
+        signOutButton.setPreferredSize(buttonSize);
+        signOutButton.setFont(font);
+        signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(Search.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
@@ -67,48 +47,65 @@ public class Search extends JFrame {
         JLabel titleLabel = new JLabel("Looking for an Item? Search now!", SwingConstants.CENTER);
         titleLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
 
-        topPanel.add(signOut, BorderLayout.EAST);
+        topPanel.add(signOutButton, BorderLayout.EAST);
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
         topPanel.add(titleLabel, BorderLayout.CENTER);
 
-        main.add(topPanel, BorderLayout.NORTH);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        //form panel
-        JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+        // Form panel
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
 
-        tosearch = new JTextField();
-        tosearch.setFont(font);
-        tosearch.setPreferredSize(new Dimension(150, 40)); 
-        addFormField(formPanel, "Item Name:", tosearch);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
 
-        searchUnit = new JTextField();
-        searchUnit.setFont(font);
-        searchUnit.setPreferredSize(new Dimension(90, 20));
-        addFormField(formPanel, "Item Unit:", searchUnit);
+        JLabel itemNameLabel = new JLabel("Item Name:");
+        itemNameField = new JTextField();
+        itemNameLabel.setFont(font);
 
+        // Set the preferred size for the item name field
+        itemNameField.setPreferredSize(new Dimension(500, 50));
 
-        result = new JTextArea(10, 30);
-        result.setFont(font);
+        JLabel unitLabel = new JLabel("Unit:");
+        unitField = new JTextField();
+        unitLabel.setFont(font);
 
-        JScrollPane resultScrollPane = new JScrollPane(result);
-        resultScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        resultScrollPane.setPreferredSize(new Dimension(900, 600));
+        // Set the preferred size for the unit field
+        unitField.setPreferredSize(new Dimension(500, 50));
 
-        main.add(resultScrollPane, BorderLayout.SOUTH);
+        formPanel.add(itemNameLabel, gbc);
+        gbc.gridy++;
+        formPanel.add(itemNameField, gbc);
+        gbc.gridy++;
+        formPanel.add(unitLabel, gbc);
+        gbc.gridy++;
+        formPanel.add(unitField, gbc);
 
-        JButton searchbtn = new JButton("Search");
-        searchbtn.setFont(font);
-        searchbtn.setPreferredSize(dimension);
-        searchbtn.addActionListener(new ActionListener() {
+        // Button panel
+        showTableButton = new JButton("Show Item Table");
+        showTableButton.setPreferredSize(buttonSize);
+        showTableButton.setMaximumSize(maxsize);
+        showTableButton.setMinimumSize(minsize);
+        showTableButton.setFont(font);
+        showTableButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent arg0) {
-                searchItem();
+            public void actionPerformed(ActionEvent e) {
+                showItemTable();
             }
         });
-        formPanel.add(searchbtn);
 
-        main.add(formPanel, BorderLayout.CENTER);
+        // Bottom panel with login button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(showTableButton);
+
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        //init frame
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
         // Sidebar
         JPanel sidebar = new JPanel();
@@ -117,9 +114,9 @@ public class Search extends JFrame {
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
-            button.setPreferredSize(dimension);
-            button.setMaximumSize(maxSize);
-            button.setMinimumSize(minSize);
+            button.setPreferredSize(buttonSize);
+            button.setMaximumSize(maxsize);
+            button.setMinimumSize(minsize);
             button.setFont(font);
             button.addActionListener(new ActionListener() {
                 @Override
@@ -130,22 +127,13 @@ public class Search extends JFrame {
             sidebar.add(button);
         }
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, main);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
-        
         setContentPane(splitPane);
 
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    private void addFormField(JPanel panel, String label, JComponent component) {
-        JLabel fieldLabel = new JLabel(label);
-        fieldLabel.setFont(font);
-        panel.add(fieldLabel);
-        panel.add(component);
-        component.setPreferredSize(dimension);
     }
 
     private void btnClick(String label) {
@@ -168,173 +156,18 @@ public class Search extends JFrame {
         }
     }
 
-    private void loadItemData() {
-        String file = "lookup_item.csv";
-        String line = "";
-        int lineCount = 0;
+
+    private void showItemTable() {
+        String itemName = itemNameField.getText().trim().toUpperCase();
+        String unit = unitField.getText().trim().toUpperCase();
     
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            while ((line = reader.readLine()) != null) {
-                lineCount++;
-                if (lineCount <= 2) {
-                    //skip the 1st and 2nd lines
-                    continue;
-                }
-    
-                String[] parts = line.split(",");
-                Item item = createItemFromLookupItem(parts);
-                itemList.add(item);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+        if (itemName.isEmpty() || unit.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter both item name and unit.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+        new ItemTable(username, itemName, unit).initialize();
+        dispose();
     }
-
-    private void loadItemPremise() {
-        String file = "lookup_premise.csv";
-        int lineCount = 0;
-    
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
-            String line = "";
-            while ((line = br.readLine()) != null) {
-                lineCount++;
-                if(lineCount < 2 || lineCount == 2709){
-                    continue;
-                }
-                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                
-                for(int i = 0; i < parts.length; i++){
-                    parts[i] = parts[i].replaceAll("^\"|\"$", "");
-                }
-                Premise premise = createPremiseFromLookupPremise((parts));
-                premiseList.add(premise);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadItemPrice() {
-        String file = "pricecatcher_2023-08.csv";
-        String line = "";
-        int lineCount = 0;
-    
-        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            while ((line = reader.readLine()) != null) {
-                lineCount++;
-                if (lineCount == 1) {
-                    continue;
-                }
-                String[] parts = line.split(",");
-                PriceCatcherData price = createPriceFromPriceCatcherData(parts);
-                priceList.add(price);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-
-    private Item createItemFromLookupItem(String[] parts) {
-        String itemCode = parts[0];
-        String itemName = parts[1];
-        String unit = parts[2];
-        String itemGroup = parts[3];
-        String itemCategory = parts[4];
-        return new Item(itemCode, itemName, unit, itemGroup, itemCategory);
-    }
-
-    private static Premise createPremiseFromLookupPremise(String[] parts) {
-        if (parts.length >= 6) {
-            String premiseCodeString = parts[0];
-            String premiseName = parts[1];
-            String address = parts[2];
-            String premiseType = parts[3];
-            String state = parts[4];
-            String district = parts[5];
-
-            try {
-                double premiseCode = Double.parseDouble(premiseCodeString);
-                
-                int premiseCodeInt = (int) premiseCode;
-
-                premiseCodeString = String.valueOf(premiseCodeInt);
-
-                return new Premise(premiseCodeString, premiseName, address, premiseType, state, district);
-            } catch (NumberFormatException e) {
-                System.err.println("Error: Unable to parse premiseCode as a double. Setting premiseCode to null.");
-                return new Premise(null, premiseName, address, premiseType, state, district);
-            }
-        } else {
-            System.err.println("Error: Insufficient elements in the parts array.");
-            return null; 
-        }
-    }
-
-
-    private static PriceCatcherData createPriceFromPriceCatcherData(String[] parts) {
-        String date = parts[0];
-        String premiseCode = parts[1];
-        String itemCode = parts[2];
-    
-        try {
-            double price = Double.parseDouble(parts[3]);
-            return new PriceCatcherData(date, premiseCode, itemCode, price);
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid price format in CSV: " + parts[3]);
-            return new PriceCatcherData(date, premiseCode, itemCode, 0.0);
-        }
-    }
-    
-    private void searchItem() {
-        String itemName = tosearch.getText().trim().toLowerCase();
-        String itemUnit = searchUnit.getText().trim().toLowerCase();
-        result.setText(""); 
-        System.out.println("Input Item Name: '" + itemName + "'");
-    
-        boolean itemFound = false;
-    
-        for (Item item : itemList) {
-            if (item.getItem().toLowerCase().trim().equals(itemName) && item.getUnit().toLowerCase().trim().equals(itemUnit)) {
-                itemFound = true;
-                String itemCode = item.getItemCode();
-                System.out.println("\nItem Code: " + itemCode);
-                result.append("Item Name: " + item.getItem() + "\n");
-                result.append("Unit: " + item.getUnit() + "\n");
-    
-                // Create a list to store prices for the current item
-                List<PriceCatcherData> pricesForItem = new ArrayList<>();
-    
-                for (PriceCatcherData price : priceList) {
-                    if (price.getItemCode().toLowerCase().trim().equals(itemCode)) {
-                        pricesForItem.add(price);
-                    }
-                }
-    
-                // Sort prices in ascending order
-                Collections.sort(pricesForItem, (p1, p2) -> Double.compare(p1.getPrice(), p2.getPrice()));
-    
-                for (PriceCatcherData sortedPrice : pricesForItem) {
-                    String premiseCode = sortedPrice.getPremiseCode();
-    
-                    for (Premise premise : premiseList) {
-                        if (premise.getPremiseCode().toLowerCase().trim().equals(premiseCode)) {
-                            result.append("\nPremise Name: " + premise.getPremise() + "\n");
-                            result.append("Address: " + premise.getAddress() + "\n");
-                            result.append("State: " + premise.getState() + "\n");
-                            result.append("District: " + premise.getDistrict() + "\n");
-                        }
-                    }
-                    result.append("Price: RM " + sortedPrice.getPrice() + "0\n");
-                }
-            }
-        }
-    
-        if (!itemFound) {
-            result.append("Item not found.");
-        }
-    }
-    
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -343,4 +176,3 @@ public class Search extends JFrame {
         });
     }
 }
-
