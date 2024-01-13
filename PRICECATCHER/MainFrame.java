@@ -10,13 +10,17 @@ public class MainFrame extends JFrame {
     final private Dimension dimension = new Dimension(150, 50);
     final private Dimension maxSize = new Dimension(600, 100);
     final private Dimension minSize = new Dimension(400, 100);
+    
+    private String username;
 
-    public MainFrame() {
+    public MainFrame(String username) {
+        this.username = username;
+
         initialize();
     }
 
     public void initialize() {
-        setTitle("Main Page");
+        setTitle("Main Page - " + username);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
 
@@ -32,8 +36,8 @@ public class MainFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(MainFrame.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
-                Login loginForm = new Login();
-                loginForm.initialize();
+                dispose();
+                new Login();
             }
         });
 
@@ -49,7 +53,7 @@ public class MainFrame extends JFrame {
         // Sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
+        String[] buttonLabels = {"Home", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
@@ -71,7 +75,6 @@ public class MainFrame extends JFrame {
 
         add(splitPane);
 
-
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -79,29 +82,27 @@ public class MainFrame extends JFrame {
     private void handleSidebarButtonClick(String label) {
         switch (label) {
             case "Home":
-                initialize();
-                break;
-            case "Import Data":
-                new ImportData().initialize();
+                new MainFrame(username);
                 break;
             case "Browse by Category":
-                new Browse().initialize();
+                new Browse(username);
                 break;
             case "Search for Product":
-                new Search().initialize();
+                new Search(username);
                 break;
             case "View Shopping Cart":
-                new Cart().initialize();
+                new Cart(username);
                 break;
             case "Account Settings":
-                new Acc().initialize();
+                new Acc(username);
                 break;
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new MainFrame();
+            Login loginUsername = new Login();
+            new MainFrame(loginUsername.getUsername());
         });
     }
 }

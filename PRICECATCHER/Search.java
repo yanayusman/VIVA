@@ -26,11 +26,12 @@ public class Search extends JFrame {
     private String premiseCode;
     private String itemUnit;
 
-    public Search(){
+    public Search(String username){
         itemList = new ArrayList<>();
         priceList = new ArrayList<>();
         premiseList = new ArrayList<>();
 
+        this.username = username;
         this.itemCode = null;
         this.premiseCode = null;
 
@@ -41,7 +42,7 @@ public class Search extends JFrame {
     }
 
     public void initialize() {
-        setTitle("Search Page");
+        setTitle("Search Page - " + username);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
     
@@ -58,8 +59,8 @@ public class Search extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JOptionPane.showMessageDialog(Search.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
-                Login loginForm = new Login();
-                loginForm.initialize();
+                dispose();
+                new Login();
             }
         });
 
@@ -112,7 +113,7 @@ public class Search extends JFrame {
         // Sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
+        String[] buttonLabels = {"Home", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
@@ -150,23 +151,19 @@ public class Search extends JFrame {
     private void btnClick(String label) {
         switch (label) {
             case "Home":
-                new MainFrame().initialize();
-                break;
-            case "Import Data":
-                new ImportData().initialize();
+                new MainFrame(username);
                 break;
             case "Browse by Category":
-                new Browse().initialize();
+                new Browse(username);
                 break;
             case "Search for Product":
-                // JOptionPane.showMessageDialog(this, "Search button clicked", "Search", JOptionPane.INFORMATION_MESSAGE);
-                initialize();
+                new Search(username);
                 break;
             case "View Shopping Cart":
-                new Cart().initialize();
+                new Cart(username);
                 break;
             case "Account Settings":
-                new Acc().initialize();
+                new Acc(username);
                 break;
         }
     }
@@ -341,7 +338,8 @@ public class Search extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Search();
+            Login loginUsername = new Login();
+            new Search(loginUsername.getUsername());
         });
     }
 }

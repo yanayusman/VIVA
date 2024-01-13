@@ -13,14 +13,18 @@ public class Browse extends JFrame {
     private final Dimension buttonSize = new Dimension(150, 50);
     private final Dimension maxsize = new Dimension(600, 100);
     private final Dimension minsize = new Dimension(400, 100);
+    
     private final String filename = "lookup_item.csv";
+    private String username;
 
-    public Browse() {
+    public Browse(String username) {
+        this.username = username;
+
         initialize();
     }
 
     public void initialize() {
-        setTitle("Browse page");
+        setTitle("Browse page - " + username);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
 
@@ -35,11 +39,9 @@ public class Browse extends JFrame {
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
-                // Handle the sign-out action
                 JOptionPane.showMessageDialog(Browse.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
-                Login loginForm = new Login();
-                loginForm.initialize();
+                dispose();
+                new Login();
             }
         });
 
@@ -71,7 +73,7 @@ public class Browse extends JFrame {
         // Sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
+        String[] buttonLabels = {"Home", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
@@ -104,7 +106,7 @@ public class Browse extends JFrame {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ItemCategoryFrame itemCategoryFrame = new ItemCategoryFrame(groupName);
+                ItemCategoryFrame itemCategoryFrame = new ItemCategoryFrame(username, groupName);
                 itemCategoryFrame.initialize();
             }
         });
@@ -114,22 +116,19 @@ public class Browse extends JFrame {
     private void btnClick(String label) {
         switch (label) {
             case "Home":
-                new MainFrame().initialize();
-                break;
-            case "Import Data":
-                new ImportData().initialize();
+                new MainFrame(username);
                 break;
             case "Browse by Category":
-                initialize();
+                new Browse(username);
                 break;
             case "Search for Product":
-                new Search().initialize();
+                new Search(username);
                 break;
             case "View Shopping Cart":
-                new Cart().initialize();
+                new Cart(username);
                 break;
             case "Account Settings":
-                new Acc().initialize();
+                new Acc(username);
                 break;
         }
     }
@@ -169,7 +168,8 @@ public class Browse extends JFrame {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Browse();
+            Login loginUsername = new Login();
+            new Browse(loginUsername.getUsername());
         });
     }
 }

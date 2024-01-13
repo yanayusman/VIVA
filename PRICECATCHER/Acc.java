@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
-import java.util.HashMap;
 
 public class Acc extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -13,15 +12,18 @@ public class Acc extends JFrame {
     private final Dimension maxsize = new Dimension(600, 100);
     private final Dimension minsize = new Dimension(400, 100);
 
-    private JTextField username, email, contactnum, address, city, state, poscode;
+    private JTextField tusername, email, contactnum, address, city, state, poscode;
     private JPasswordField pswd;
+    private String username;
 
-    public Acc() {
+    public Acc(String username) {
+        this.username = username;
+
         initialize();
     }
 
     public void initialize() {
-        setTitle("Account Settings Page");
+        setTitle("Account Settings Page - " + username);
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
         setMinimumSize(new Dimension(500, 450));
@@ -40,8 +42,7 @@ public class Acc extends JFrame {
                 // Handle the sign-out action
                 JOptionPane.showMessageDialog(Acc.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
-                Login loginForm = new Login();
-                loginForm.initialize();
+                new Login();
             }
         });
 
@@ -58,7 +59,7 @@ public class Acc extends JFrame {
         JPanel formPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
 
-        addFormField(formPanel, "Username:", username = new JTextField());
+        addFormField(formPanel, "Username:", tusername = new JTextField());
         addFormField(formPanel, "Password:", pswd = new JPasswordField());
         addFormField(formPanel, "E-mail:", email = new JTextField());
         addFormField(formPanel, "Contact Number:", contactnum = new JTextField());
@@ -83,7 +84,7 @@ public class Acc extends JFrame {
         // Sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
-        String[] buttonLabels = {"Home", "Import Data", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
+        String[] buttonLabels = {"Home", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
 
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
@@ -117,7 +118,7 @@ public class Acc extends JFrame {
     }
 
     private void update() {
-        String Username = username.getText();
+        String Username = tusername.getText();
         String Password = new String(pswd.getPassword());
         String Email = email.getText();
         String contactNum = contactnum.getText();
@@ -157,29 +158,27 @@ public class Acc extends JFrame {
     private void btnClick(String label) {
         switch (label) {
             case "Home":
-                new MainFrame().initialize();
-                break;
-            case "Import Data":
-                new ImportData().initialize();
+                new MainFrame(username);
                 break;
             case "Browse by Category":
-                new Browse().initialize();
+                new Browse(username);
                 break;
             case "Search for Product":
-                new Search().initialize();
+                new Search(username);
                 break;
             case "View Shopping Cart":
-                new Cart().initialize();
+                new Cart(username);
                 break;
             case "Account Settings":
-                initialize();
+                new Acc(username);
                 break;
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Acc();
+            Login loginUsername = new Login();
+            new Acc(loginUsername.getUsername());
         });
     }
 }

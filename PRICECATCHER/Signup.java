@@ -8,14 +8,29 @@ import javax.swing.*;
 
 public class Signup extends JFrame{
     final private Font font = new Font("Segeo print", Font.BOLD, 18);
+    private final Dimension buttonSize = new Dimension(150, 50);
+    private final Dimension maxsize = new Dimension(600, 100);
+    private final Dimension minsize = new Dimension(400, 100);
+
     private JTextField username, email, contactnum, address, city, state, poscode;
     private JPasswordField pswd;
     
+    public Signup() {
+        initialize();
+    }
+
     public void initialize(){
+        setTitle("Signup Form");
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        setSize(1000, 900);
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
+
         //form
         JLabel signup = new JLabel("Signup Form", SwingConstants.CENTER);
         signup.setFont(font);
-
+        
         JLabel lbusername = new JLabel("Username: ");
         lbusername.setFont(font);
 
@@ -85,31 +100,31 @@ public class Signup extends JFrame{
         formPanel.add(lbposcode);
         formPanel.add(poscode);
 
+        // signup button
         JButton btnsignup = new JButton("Signup");
+        btnsignup.setPreferredSize(buttonSize);
+        btnsignup.setMaximumSize(maxsize);
+        btnsignup.setMinimumSize(minsize);
         btnsignup.setFont(font);
         btnsignup.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                // TODO Auto-generated method stub
-                signup();
-                throw new UnsupportedOperationException("Unimplemented method 'actionPerformed'");
-                    
+                signup();                    
             } 
         });
 
-        JPanel btn = new JPanel();
-        btn.setLayout(new GridLayout(1, 2, 10, 10));
-        btn.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 50));
-        btn.add(btnsignup);
+        // Bottom panel with login button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(btnsignup);
+
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        setContentPane(mainPanel);
 
         add(formPanel, BorderLayout.NORTH);
-        add(btnsignup, BorderLayout.SOUTH);
 
-        setTitle("Signup Form");
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(1000, 900);
         setMinimumSize(new Dimension(500, 450));
+
         setLocationRelativeTo(null);
         setVisible(true);
     }
@@ -158,5 +173,9 @@ public class Signup extends JFrame{
         }
     }
     
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            new Signup();
+        });       
+    }
 }
-
