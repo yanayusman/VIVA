@@ -1,11 +1,15 @@
 package PRICECATCHER;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,8 +20,10 @@ public class Cart extends JFrame {
     private final Dimension minSize = new Dimension(400, 100);
 
     private JTable cartTable;
+    private JLabel totalLabel;
     private DefaultTableModel tableModel;
-
+    private JButton viewCheapestSellerButton;
+    private JButton findShopsButton;
     private String username;
     private Map<String, Object[]> cartData;
 
@@ -27,18 +33,23 @@ public class Cart extends JFrame {
 
         initialize();
         loadDataFromDatabase();
+        displayTotal();
     }
 
     private void loadDataFromDatabase() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
              Statement statement = connection.createStatement()) {
-
+    
             // Check if cart data for this user exists in the database
             String checkQuery = "SELECT item_code, premise_code, item_name, unit, quantity, price FROM cart WHERE username = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
                 checkStatement.setString(1, username);
                 ResultSet resultSet = checkStatement.executeQuery();
-
+    
+                // Clear existing data before loading new data
+                cartData.clear();
+                tableModel.setRowCount(0);
+    
                 while (resultSet.next()) {
                     int itemCode = resultSet.getInt("item_code");
                     String premiseCode = resultSet.getString("premise_code");
@@ -46,27 +57,46 @@ public class Cart extends JFrame {
                     String unit = resultSet.getString("unit");
                     int quantity = resultSet.getInt("quantity");
                     double price = resultSet.getDouble("price");
-
+    
                     // Add data to the table model
                     tableModel.addRow(new Object[]{itemCode, premiseCode, itemName, unit, quantity, price});
+    
+                    // Add data to cartData map
+                    cartData.put(premiseCode, new Object[]{itemCode, premiseCode, itemName, unit, quantity, price});
                 }
+    
+                // Write entire cart details to CSV file after loading data
+                writeCartToCSV(cartData);
             }
-
+    
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void displayTotal() {
+        double total = 0;
+
+        for (Object[] cartItem : cartData.values()) {
+            total += (double) cartItem[5] * (int) cartItem[4]; 
+        }
+
+        DecimalFormat dec = new DecimalFormat("#.00");
+        String decTotal = dec.format(total);
+
+        totalLabel.setText("Total Price: RM " + decTotal);
+    }
+
     public void initialize() {
-        setTitle("Shopping Cart - " + username);
+        setTitle("Shopping Cart Page - " + username);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1000, 900);
-
+    
         // Create the main panel with BoxLayout
         JPanel main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
-
+    
         // Create the top panel with Sign Out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
@@ -80,14 +110,14 @@ public class Cart extends JFrame {
                 new Login();
             }
         });
-
+    
         JLabel mainLabel = new JLabel("Shopping Cart Table");
         mainLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
-
+    
         topPanel.add(signOutButton, BorderLayout.EAST);
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
         topPanel.add(mainLabel, BorderLayout.CENTER);
-
+    
         // Create the table model and table
         tableModel = new DefaultTableModel() {
             @Override
@@ -95,36 +125,33 @@ public class Cart extends JFrame {
                 return column == getColumnCount() - 1;
             }
         };
-
+    
         tableModel.addColumn("Item Code");
-        tableModel.addColumn("Item Name");
         tableModel.addColumn("Premise Code");
+        tableModel.addColumn("Item Name");
         tableModel.addColumn("Unit");
         tableModel.addColumn("Quantity");
         tableModel.addColumn("Price");
         tableModel.addColumn("Remove");
-
+    
         cartTable = new JTable(tableModel);
-
+    
         // Add remove button column renderer and editor
         cartTable.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new ButtonRenderer());
         cartTable.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new ButtonEditor(new JCheckBox(), this));
-
+    
         JScrollPane scrollPane = new JScrollPane(cartTable);
         scrollPane.setPreferredSize(new Dimension(900, 900));
-
+    
         // Add components to the main panel
         main.add(topPanel);
         main.add(scrollPane);
-
-        // Set preferred size for the main panel
-        main.setPreferredSize(new Dimension(600, 500));
-
-        // Create the sidebar
+    
+        // sidebar
         JPanel sidebar = new JPanel();
         sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
         String[] buttonLabels = {"Home", "Browse by Category", "Search for Product", "View Shopping Cart", "Account Settings"};
-
+    
         for (String label : buttonLabels) {
             JButton button = new JButton(label);
             button.setPreferredSize(dimension);
@@ -139,18 +166,82 @@ public class Cart extends JFrame {
             });
             sidebar.add(button);
         }
+    
+        // Create the button panel with total label
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
 
+        // Total label
+        totalLabel = new JLabel();
+        totalLabel.setFont(font);
+        totalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // View cheapest seller button
+        viewCheapestSellerButton = new JButton("View Cheapest Seller");
+        viewCheapestSellerButton.setPreferredSize(new Dimension(200, 50));
+        viewCheapestSellerButton.setFont(font);
+        viewCheapestSellerButton.addActionListener(e -> viewCheapestSeller());
+
+        // Find shops button
+        findShopsButton = new JButton("Find Shops to Buy Items in Cart");
+        findShopsButton.setPreferredSize(new Dimension(250, 50));
+        findShopsButton.setFont(font);
+        findShopsButton.addActionListener(e -> findShopsForItems());
+
+        // Add components to the button panel
+        buttonPanel.add(totalLabel);
+        buttonPanel.add(viewCheapestSellerButton);
+        buttonPanel.add(findShopsButton);
+    
+        // Add the button panel to the main panel
+        main.add(buttonPanel);
+    
+        // Set preferred size for the main panel
+        main.setPreferredSize(new Dimension(600, 500));
+    
         // Set up the split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, main);
         splitPane.setDividerLocation(220);
-
+    
         // Add the split pane to the content pane
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(splitPane, BorderLayout.CENTER);
-
+    
         setLocationRelativeTo(null);
         setVisible(true);
+    }
+
+    private void viewCheapestSeller() {
+        dispose();
+        new CheapestSeller(username);
+    }
+
+    private void writeCartToCSV(Map<String, Object[]> cartData) {
+        String csvFilePath = "user_cart_" + username + ".csv";
+
+        try (FileWriter writer = new FileWriter(csvFilePath, false)) {
+            // Write CSV header
+            writer.append("Item Code,Premise Code,Item Name,Unit,Quantity,Price\n");
+
+            // Write cart details to CSV file
+            for (Object[] cartItem : cartData.values()) {
+                writer.append(cartItem[0].toString()).append(",").append(cartItem[1].toString())
+                        .append(",").append(cartItem[2].toString()).append(",")
+                        .append(cartItem[3].toString()).append(",").append(cartItem[4].toString())
+                        .append(",").append(cartItem[5].toString()).append("\n");
+            }
+
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error writing cart details to CSV file.");
+        }
+    }
+
+    private void findShopsForItems() {
+        dispose();
+        new FindShops(username);
     }
 
     class ButtonRenderer extends JButton implements TableCellRenderer {
@@ -212,8 +303,6 @@ public class Cart extends JFrame {
         }
     }
     
-    
-
     public void removeFromDatabase(String premiseCode) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
              PreparedStatement statement = connection.prepareStatement("DELETE FROM cart WHERE username = ? AND premise_code = ?")) {

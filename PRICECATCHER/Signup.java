@@ -3,6 +3,8 @@ package PRICECATCHER;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.sql.*;
 import javax.swing.*;
 
@@ -130,7 +132,6 @@ public class Signup extends JFrame{
     }
 
     private void signup() {
-    
         String Username = username.getText();
         String Password = new String(pswd.getPassword());
         String Email = email.getText();
@@ -139,7 +140,7 @@ public class Signup extends JFrame{
         String City = city.getText();
         String State = state.getText();
         String Poscode = poscode.getText();
-    
+
         // JDBC code to insert data into the database
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
@@ -153,23 +154,43 @@ public class Signup extends JFrame{
             pS.setString(6, City);
             pS.setString(7, State);
             pS.setString(8, Poscode);
-    
-            int result = pS.executeUpdate(); 
-    
+
+            int result = pS.executeUpdate();
+
             if (result > 0) {
                 JOptionPane.showMessageDialog(this, "Signup successful!");
+
+                // Write user details to CSV file
+                writeUserToCSV(Username, Password, Email, contactNum, Address, City, State, Poscode);
+
+                // Open login window
                 Login login = new Login();
                 login.initialize();
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, "Signup failed. Please try again.");
             }
-    
+
             pS.close();
             connection.close();
         } catch (SQLException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Database error. Please try again.");
+        }
+    }
+
+    private void writeUserToCSV(String username, String password, String email, String contactNum, String address, String city, String state, String poscode) {
+        String csvFilePath = "userDetails.csv";
+
+        try (FileWriter writer = new FileWriter(csvFilePath, true)) {
+            writer.append(username).append(",").append(password).append(",").append(email)
+                    .append(",").append(contactNum).append(",").append(address).append(",")
+                    .append(city).append(",").append(state).append(",").append(poscode).append("\n");
+
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error writing user details to CSV file.");
         }
     }
     

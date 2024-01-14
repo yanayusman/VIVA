@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class Search extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -158,15 +163,30 @@ public class Search extends JFrame {
 
 
     private void showItemTable() {
-        String itemName = itemNameField.getText().trim().toUpperCase();
+        String partialItemName = "%" + itemNameField.getText().trim().toUpperCase() + "%";
         String unit = unitField.getText().trim().toUpperCase();
-    
-        if (itemName.isEmpty() || unit.isEmpty()) {
+
+        if (partialItemName.isEmpty() || unit.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter both item name and unit.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        new ItemTable(username, itemName, unit).initialize();
-        dispose();
+
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
+             PreparedStatement preparedStatement = connection.prepareStatement(
+                     "SELECT * FROM lookup_item WHERE UPPER(item) LIKE ? AND UPPER(unit) = ?")) {
+
+            preparedStatement.setString(1, partialItemName);
+            preparedStatement.setString(2, unit);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            new SearchTable(username, resultSet);
+            dispose();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error fetching data from the database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public static void main(String[] args) {

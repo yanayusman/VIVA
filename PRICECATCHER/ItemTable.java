@@ -209,12 +209,11 @@ public class ItemTable extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Get the data from the selected row
             String seller = (String) table.getValueAt(selectedRow, 0);
             double price = (double) table.getValueAt(selectedRow, 1);
             String address = (String) table.getValueAt(selectedRow, 2);
 
-            String quantity = "1"; // Assuming a default quantity of 1
+            String quantity = "1";
 
             // Retrieve the premise code from the map
             premiseCode = sellerPremiseMap.get(seller);
@@ -356,6 +355,7 @@ public class ItemTable extends JFrame {
                 if(lineCount < 2 || lineCount == 2709){
                     continue;
                 }
+                
                 String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 
                 for(int i = 0; i < parts.length; i++){

@@ -20,54 +20,61 @@ public class Login extends JFrame{
         initialize();
     }
 
-    public void initialize(){
+    public void initialize() {
         setTitle("Login Form");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(1000, 900);
-
+    
+        // Create a JLabel to hold the background image
+        JLabel background = new JLabel(new ImageIcon("/home/liyana/Documents/priceCatcher/background_1.jpg"));
+        setContentPane(background);
+        setLayout(new BorderLayout());
+    
         JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setOpaque(false); // Make the mainPanel transparent to show the background
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
-
+    
         //form panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridLayout(0, 1, 10, 10));
+        formPanel.setOpaque(false); // Make the formPanel transparent
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
-        
+    
         JLabel lblogin = new JLabel("Login Form", SwingConstants.CENTER);
         lblogin.setFont(mainFont);
-
+    
         JLabel lbusername = new JLabel("Username: ");
         lbusername.setFont(mainFont);
-
+    
         tfusername = new JTextField();
         tfusername.setFont(mainFont);
-
+    
         JLabel lbpswd = new JLabel("Password: ");
         lbpswd.setFont(mainFont);
-
+    
         pfpswd = new JPasswordField();
         pfpswd.setFont(mainFont);
-        
+    
         // sign up
         JLabel signup = new JLabel("<html><u>Don't have an account? Sign up now!</u></html>", SwingConstants.LEFT);
         signup.setFont(mainFont);
-        signup.setForeground(Color.BLUE); 
-                signup.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-                signup.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        Signup signUp = new Signup();
-                        signUp.initialize();
-                        dispose();
-                    }
-                });
-
+        signup.setForeground(Color.BLUE);
+        signup.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        signup.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Signup signUp = new Signup();
+                signUp.initialize();
+                dispose();
+            }
+        });
+    
         formPanel.add(lblogin);
         formPanel.add(lbusername);
         formPanel.add(tfusername);
         formPanel.add(lbpswd);
         formPanel.add(pfpswd);
         formPanel.add(signup);
-
+    
         //button panel
         JButton btnlogin = new JButton("Login");
         btnlogin.setPreferredSize(buttonSize);
@@ -79,9 +86,9 @@ public class Login extends JFrame{
             public void actionPerformed(ActionEvent arg0) {
                 String username = tfusername.getText();
                 String pswd = String.valueOf(pfpswd.getPassword());
-
+    
                 User user = getAuthenticatedUser(username, pswd);
-
+    
                 if (user != null) {
                     MainFrame mainframe = new MainFrame(username);
                     mainframe.initialize();
@@ -92,25 +99,24 @@ public class Login extends JFrame{
                     pfpswd.setText("");
                 }
             }
-
-
         });
-
+    
         // Bottom panel with login button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setOpaque(false); // Make the bottomPanel transparent
         bottomPanel.add(btnlogin);
-
+    
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        mainPanel.add(formPanel, BorderLayout.NORTH); // Add formPanel after setting the background
+    
         setContentPane(mainPanel);
-
-        //init frame
-        add(formPanel, BorderLayout.NORTH);
-
+    
         setMinimumSize(new Dimension(500, 450));
-
+    
         setLocationRelativeTo(null);
         setVisible(true);
     }
+    
    
     //retrieve from db
     private User getAuthenticatedUser(String username, String pswd){

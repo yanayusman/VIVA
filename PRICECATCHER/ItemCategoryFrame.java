@@ -152,4 +152,3 @@ public class ItemCategoryFrame extends JFrame {
         return categories;
     }
 }
-

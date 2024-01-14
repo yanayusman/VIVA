@@ -10,7 +10,7 @@ public class MainFrame extends JFrame {
     final private Dimension dimension = new Dimension(150, 50);
     final private Dimension maxSize = new Dimension(600, 100);
     final private Dimension minSize = new Dimension(400, 100);
-    
+
     private String username;
 
     public MainFrame(String username) {
@@ -45,6 +45,11 @@ public class MainFrame extends JFrame {
         mainLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
         mainLabel.setHorizontalAlignment(JLabel.CENTER);
         mainPanel.add(mainLabel, BorderLayout.CENTER);
+
+        // Inserting an image using JLabel
+        ImageIcon imageIcon = new ImageIcon("background_1.jpg");
+        JLabel imageLabel = new JLabel(imageIcon);
+        mainPanel.add(imageLabel, BorderLayout.NORTH);
 
         topPanel.add(signOutButton, BorderLayout.EAST);
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
