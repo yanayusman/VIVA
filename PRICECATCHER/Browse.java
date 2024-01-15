@@ -31,7 +31,7 @@ public class Browse extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -54,10 +54,10 @@ public class Browse extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Load groups from CSV file
+        // load groups from CSV file
         List<String> groups = getGroups();
 
-        // Group buttons
+        // group buttons
         JPanel groupPanel = new JPanel();
         groupPanel.setLayout(new BoxLayout(groupPanel, BoxLayout.Y_AXIS));
         groupPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 20));
@@ -90,6 +90,7 @@ public class Browse extends JFrame {
             sidebar.add(button);
         }
 
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
@@ -99,6 +100,7 @@ public class Browse extends JFrame {
         setVisible(true);
     }
 
+    // group button
     private JButton createGroupBtn(String groupName) {
         JButton button = new JButton(groupName);
         button.setFont(font);
@@ -113,6 +115,7 @@ public class Browse extends JFrame {
         return button;
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":
@@ -133,6 +136,7 @@ public class Browse extends JFrame {
         }
     }
 
+    // get groups
     private List<String> getGroups() {
         Set<String> groupSet = new HashSet<>();
 
@@ -159,7 +163,7 @@ public class Browse extends JFrame {
             e.printStackTrace();
         }
 
-        // Convert the set to a sorted list
+        // convert the set to a sorted list
         List<String> groupList = new ArrayList<>(groupSet);
         Collections.sort(groupList);
 

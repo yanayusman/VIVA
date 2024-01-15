@@ -9,7 +9,6 @@ import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -32,18 +31,15 @@ public class PriceTrend extends JFrame {
         setTitle("Browse by Categories - " + username);
         setSize(1000, 900);
 
-        // Create dataset for the bar chart
+        // create dataset for the bar chart
         CategoryDataset dataset = createDataset(priceMap);
 
-        // Create the bar chart
         JFreeChart barChart = ChartFactory.createBarChart("Price Trend for " + itemName + " Across Different Premises", "Premise", "Price", dataset, PlotOrientation.VERTICAL, true, true, false);
 
-        // Customize the chart (optional)
         CategoryPlot plot = barChart.getCategoryPlot();
         CategoryAxis domainAxis = plot.getDomainAxis();
         domainAxis.setCategoryLabelPositions(CategoryLabelPositions.UP_45);
 
-        // Create and show the chart panel
         ChartPanel chartPanel = new ChartPanel(barChart);
         chartPanel.setPreferredSize(new Dimension(800, 600));
 
@@ -67,7 +63,6 @@ public class PriceTrend extends JFrame {
             sidebar.add(button);
         }
 
-        // Add Sign Out button to the top panel
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
         signOutButton.setFont(font);
@@ -80,17 +75,15 @@ public class PriceTrend extends JFrame {
             }
         });
 
-        // Top panel with Sign Out button
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(signOutButton, BorderLayout.EAST);
 
-        // Create a panel to hold the top panel, chart panel, and sidebar
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(topPanel, BorderLayout.NORTH);
         mainPanel.add(sidebar, BorderLayout.WEST);
         mainPanel.add(chartPanel, BorderLayout.CENTER);
 
-        // Bottom panel with Back button
+        // back button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
@@ -102,6 +95,7 @@ public class PriceTrend extends JFrame {
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
@@ -111,10 +105,10 @@ public class PriceTrend extends JFrame {
         setVisible(true);
     }
 
+    // add data to dataset
     private CategoryDataset createDataset(Map<String, Double> priceMap) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        // Add data to the dataset
         for (Map.Entry<String, Double> entry : priceMap.entrySet()) {
             dataset.addValue(entry.getValue(), "Price", entry.getKey());
         }
@@ -122,6 +116,7 @@ public class PriceTrend extends JFrame {
         return dataset;
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":

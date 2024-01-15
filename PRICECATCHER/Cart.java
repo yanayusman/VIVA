@@ -6,12 +6,10 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Cart extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -36,17 +34,18 @@ public class Cart extends JFrame {
         displayTotal();
     }
 
+    // load data from database
     private void loadDataFromDatabase() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
              Statement statement = connection.createStatement()) {
     
-            // Check if cart data for this user exists in the database
+            // check if cart data for this user exists
             String checkQuery = "SELECT item_code, premise_code, item_name, unit, quantity, price FROM cart WHERE username = ?";
             try (PreparedStatement checkStatement = connection.prepareStatement(checkQuery)) {
                 checkStatement.setString(1, username);
                 ResultSet resultSet = checkStatement.executeQuery();
     
-                // Clear existing data before loading new data
+                // clear existing data before loading new data
                 cartData.clear();
                 tableModel.setRowCount(0);
     
@@ -58,14 +57,12 @@ public class Cart extends JFrame {
                     int quantity = resultSet.getInt("quantity");
                     double price = resultSet.getDouble("price");
     
-                    // Add data to the table model
+                    // add data to the table model
                     tableModel.addRow(new Object[]{itemCode, premiseCode, itemName, unit, quantity, price});
     
-                    // Add data to cartData map
+                    // add data to cartData map
                     cartData.put(premiseCode, new Object[]{itemCode, premiseCode, itemName, unit, quantity, price});
-                }
-    
-                // Write entire cart details to CSV file after loading data
+                }    
                 writeCartToCSV(cartData);
             }
     
@@ -74,30 +71,35 @@ public class Cart extends JFrame {
         }
     }
 
+    // display total 
     private void displayTotal() {
         double total = 0;
-
+    
         for (Object[] cartItem : cartData.values()) {
-            total += (double) cartItem[5] * (int) cartItem[4]; 
+            if (cartItem.length >= 6) {
+                total += (double) cartItem[5] * (int) cartItem[4];
+            } else {
+                System.err.println("Invalid cart item array: " + Arrays.toString(cartItem));
+            }
         }
 
         DecimalFormat dec = new DecimalFormat("#.00");
         String decTotal = dec.format(total);
-
+    
         totalLabel.setText("Total Price: RM " + decTotal);
     }
+    
 
     public void initialize() {
         setTitle("Shopping Cart Page - " + username);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(1000, 900);
     
-        // Create the main panel with BoxLayout
         JPanel main = new JPanel();
         main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
         main.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
     
-        // Create the top panel with Sign Out button and title
+        // create the top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(new Dimension(150, 50));
@@ -118,7 +120,7 @@ public class Cart extends JFrame {
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
         topPanel.add(mainLabel, BorderLayout.CENTER);
     
-        // Create the table model and table
+        // create table 
         tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -136,14 +138,13 @@ public class Cart extends JFrame {
     
         cartTable = new JTable(tableModel);
     
-        // Add remove button column renderer and editor
+        // remove button column
         cartTable.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellRenderer(new ButtonRenderer());
         cartTable.getColumnModel().getColumn(tableModel.getColumnCount() - 1).setCellEditor(new ButtonEditor(new JCheckBox(), this));
     
         JScrollPane scrollPane = new JScrollPane(cartTable);
         scrollPane.setPreferredSize(new Dimension(900, 900));
     
-        // Add components to the main panel
         main.add(topPanel);
         main.add(scrollPane);
     
@@ -167,43 +168,39 @@ public class Cart extends JFrame {
             sidebar.add(button);
         }
     
-        // Create the button panel with total label
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
+        // create the button panel with total label
+        JPanel buttonPanel = new JPanel(new FlowLayout()); 
 
-        // Total label
+        // total label
         totalLabel = new JLabel();
         totalLabel.setFont(font);
         totalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // View cheapest seller button
+        // view cheapest seller button
         viewCheapestSellerButton = new JButton("View Cheapest Seller");
         viewCheapestSellerButton.setPreferredSize(new Dimension(200, 50));
-        viewCheapestSellerButton.setFont(font);
+        viewCheapestSellerButton.setFont(new Font("Segoe print", Font.BOLD, 16));
         viewCheapestSellerButton.addActionListener(e -> viewCheapestSeller());
 
-        // Find shops button
+        // find shops button
         findShopsButton = new JButton("Find Shops to Buy Items in Cart");
         findShopsButton.setPreferredSize(new Dimension(250, 50));
-        findShopsButton.setFont(font);
+        findShopsButton.setFont(new Font("Segoe print", Font.BOLD, 16));
         findShopsButton.addActionListener(e -> findShopsForItems());
 
-        // Add components to the button panel
+        // add components to the button panel
         buttonPanel.add(totalLabel);
         buttonPanel.add(viewCheapestSellerButton);
         buttonPanel.add(findShopsButton);
-    
-        // Add the button panel to the main panel
-        main.add(buttonPanel);
-    
-        // Set preferred size for the main panel
+
+        main.add(buttonPanel);    
         main.setPreferredSize(new Dimension(600, 500));
     
-        // Set up the split pane
+        // split pane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, main);
         splitPane.setDividerLocation(220);
     
-        // Add the split pane to the content pane
+        // sdd the split pane to the content pane
         Container container = getContentPane();
         container.setLayout(new BorderLayout());
         container.add(splitPane, BorderLayout.CENTER);
@@ -212,11 +209,13 @@ public class Cart extends JFrame {
         setVisible(true);
     }
 
+    // view cheapest seller page
     private void viewCheapestSeller() {
         dispose();
         new CheapestSeller(username);
     }
 
+    // write cart to CSV
     private void writeCartToCSV(Map<String, Object[]> cartData) {
         String csvFilePath = "user_cart_" + username + ".csv";
 
@@ -226,11 +225,16 @@ public class Cart extends JFrame {
 
             // Write cart details to CSV file
             for (Object[] cartItem : cartData.values()) {
-                writer.append(cartItem[0].toString()).append(",").append(cartItem[1].toString())
+                if (cartItem.length >= 6) { 
+                    writer.append(cartItem[0].toString()).append(",").append(cartItem[1].toString())
                         .append(",").append(cartItem[2].toString()).append(",")
                         .append(cartItem[3].toString()).append(",").append(cartItem[4].toString())
                         .append(",").append(cartItem[5].toString()).append("\n");
+                } else {
+                    System.err.println("Invalid cart item array: " + Arrays.toString(cartItem));
+                }
             }
+
 
             writer.flush();
         } catch (IOException e) {
@@ -239,11 +243,13 @@ public class Cart extends JFrame {
         }
     }
 
+    // find shops for all items page
     private void findShopsForItems() {
         dispose();
         new FindShops(username);
     }
 
+    // remove button
     class ButtonRenderer extends JButton implements TableCellRenderer {
         public ButtonRenderer() {
             setOpaque(true);
@@ -283,13 +289,9 @@ public class Cart extends JFrame {
         @Override
         public Object getCellEditorValue() {
             if (isClicked) {
-                // Get the premise code from the selected row
                 String premiseCode = (String) cartTable.getValueAt(selectedRow, 1);
     
-                // Remove the row from the database
-                cart.removeFromDatabase(premiseCode);
-    
-                // Remove the row from the table
+                cart.removeFromDatabase(premiseCode);    
                 cart.removeRow(selectedRow);
             }
             isClicked = false;
@@ -303,16 +305,21 @@ public class Cart extends JFrame {
         }
     }
     
+    // remove from database
     public void removeFromDatabase(String premiseCode) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
              PreparedStatement statement = connection.prepareStatement("DELETE FROM cart WHERE username = ? AND premise_code = ?")) {
-
+    
             statement.setString(1, username);
             statement.setString(2, premiseCode);
-
+    
             int affectedRows = statement.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("Row deleted successfully.");
+                
+                cartData.remove(premiseCode);
+    
+                displayTotal();
             } else {
                 System.out.println("Row deletion failed. Row not found or other error occurred.");
             }
@@ -320,8 +327,9 @@ public class Cart extends JFrame {
             e.printStackTrace();
         }
     }
+    
 
-    // Add this method to remove the selected row
+    // remove the selected row
     public void removeRow(int rowIndex) {
         if (rowIndex >= 0 && rowIndex < tableModel.getRowCount()) {
             tableModel.removeRow(rowIndex);
@@ -330,7 +338,7 @@ public class Cart extends JFrame {
         }
     }
 
-
+    // sidebar button
     private void handleSidebarButtonClick(String label) {
         switch (label) {
             case "Home":

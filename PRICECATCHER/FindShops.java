@@ -31,14 +31,15 @@ public class FindShops extends JFrame {
         displayPremiseDetails();
     }
 
+    // display premise details
     private void displayPremiseDetails() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT item_name, premise_code, price FROM cart WHERE username = ?")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT item_name, premise_code, price FROM cart WHERE username = ?")) {
 
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            // table
             DefaultTableModel tableModel = new DefaultTableModel();
             tableModel.addColumn("Premise Code");
             tableModel.addColumn("Item Name");
@@ -76,7 +77,7 @@ public class FindShops extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -84,7 +85,6 @@ public class FindShops extends JFrame {
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the sign-out action
                 JOptionPane.showMessageDialog(FindShops.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 Login loginForm = new Login();
@@ -102,24 +102,20 @@ public class FindShops extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         mainPanel.add(topPanel, BorderLayout.NORTH);
         
-        // Create a JButton for the back action
+        // back button
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
         backButton.setFont(font);
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the back action
                 dispose();
                 new Cart(username);
             }
         });
 
         bottomPanel.add(backButton);
-
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-
-       
 
         // Sidebar
         JPanel sidebar = new JPanel();
@@ -150,6 +146,7 @@ public class FindShops extends JFrame {
         setVisible(true);
     }
 
+    // find premise address
     private String findPremiseAddressFromCSV(String premiseCode) {
         String address = null;
 
@@ -164,6 +161,7 @@ public class FindShops extends JFrame {
         return null;
     }
 
+    // load premise data
     private List<Premise> loadPremiseData() {
         String file = "lookup_premise.csv";
         int lineCount = 0;
@@ -191,6 +189,7 @@ public class FindShops extends JFrame {
         return premiseList;
     }
 
+    // store premise data into premiseList
     private Premise createPremise(String[] parts) {
         if (parts.length >= 6) {
             String premiseCodeString = parts[0];
@@ -218,6 +217,7 @@ public class FindShops extends JFrame {
         }
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":

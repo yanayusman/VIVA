@@ -37,7 +37,7 @@ public class ItemFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
     
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(dimension);
@@ -57,23 +57,21 @@ public class ItemFrame extends JFrame {
     
         mainPanel.add(topPanel, BorderLayout.NORTH);
     
-        // Create table model
+        // table 
         DefaultTableModel tableModel = new DefaultTableModel();
         tableModel.addColumn("Name");
         tableModel.addColumn("Unit");
     
         JTable table = new JTable(tableModel);
-        table.setFont(new Font("Segoe Print", Font.PLAIN, 18));
-    
-        // Adjust the row height
+        table.setFont(new Font("Segoe Print", Font.PLAIN, 18));    
         table.setRowHeight(30);
     
-        // Load items for the specified category from CSV file
+        // load items for the specified category
         loadItemData();
     
-        // Add items to the table model
         itemList.stream().map(item -> new Object[]{item.getItem(), item.getUnit()}).forEach(tableModel::addRow);
     
+        // when user clicked row it will redirect to ItemTable class
         table.addMouseListener(new MouseInputAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -89,13 +87,12 @@ public class ItemFrame extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
     
-        // Back button
+        // back button
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(dimension);
         backButton.setFont(font);
         backButton.addActionListener(e -> dispose());
     
-        // Bottom panel with Back button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(backButton);
     
@@ -116,6 +113,7 @@ public class ItemFrame extends JFrame {
             sidebar.add(button);
         }
     
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
         setContentPane(splitPane);
@@ -124,6 +122,7 @@ public class ItemFrame extends JFrame {
         setVisible(true);
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":
@@ -144,6 +143,7 @@ public class ItemFrame extends JFrame {
         }
     }
 
+    // load item data
     private void loadItemData() {
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             reader.lines()
@@ -157,6 +157,7 @@ public class ItemFrame extends JFrame {
         }
     }
 
+    // item store into list
     private Item createItem(String[] parts) {
         String itemCode = parts[0];
         String itemName = parts[1];

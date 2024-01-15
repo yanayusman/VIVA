@@ -28,7 +28,7 @@ public class ItemCategoryFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
     
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -48,9 +48,10 @@ public class ItemCategoryFrame extends JFrame {
     
         mainPanel.add(topPanel, BorderLayout.NORTH);
     
-        // Load item categories for the specified group from CSV file
+        // load item categories for the specified group from CSV file
         Set<String> uniqueItemCategory = getCategoryForGroup(group);
     
+        // create category button
         JPanel itemCategoryPanel = new JPanel();
         itemCategoryPanel.setLayout(new BoxLayout(itemCategoryPanel, BoxLayout.Y_AXIS));
     
@@ -65,13 +66,13 @@ public class ItemCategoryFrame extends JFrame {
     
         mainPanel.add(itemCategoryPanel, BorderLayout.CENTER);
     
-        // Back button
+        // back button
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
         backButton.setFont(font);
         backButton.addActionListener(e -> dispose());
     
-        // Bottom panel with Back button
+        // bottom panel with back button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(backButton);
     
@@ -93,6 +94,7 @@ public class ItemCategoryFrame extends JFrame {
             sidebar.add(button);
         }
     
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
         setContentPane(splitPane);
@@ -101,7 +103,7 @@ public class ItemCategoryFrame extends JFrame {
         setVisible(true);
     }
     
-    
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":
@@ -122,6 +124,7 @@ public class ItemCategoryFrame extends JFrame {
         }
     }
 
+    // get category 
     private Set<String> getCategoryForGroup(String group) {
         Set<String> categories = new HashSet<>();
 

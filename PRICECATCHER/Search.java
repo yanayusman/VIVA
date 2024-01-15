@@ -9,6 +9,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Search extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -17,9 +20,9 @@ public class Search extends JFrame {
     private final Dimension minsize = new Dimension(400, 100);
 
     private JTextField itemNameField;
-    private JTextField unitField;
     private JButton showTableButton;
     private String username;
+    private JComboBox<String> unitComboBox;
 
     public Search(String username) {
         this.username = username;
@@ -35,7 +38,7 @@ public class Search extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -58,7 +61,6 @@ public class Search extends JFrame {
 
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
-        // Form panel
         JPanel formPanel = new JPanel();
         formPanel.setLayout(new GridBagLayout());
         formPanel.setBorder(BorderFactory.createEmptyBorder(30, 50, 30, 100));
@@ -70,17 +72,17 @@ public class Search extends JFrame {
 
         JLabel itemNameLabel = new JLabel("Item Name:");
         itemNameField = new JTextField();
+        itemNameField.setFont(new Font("Segoe print", Font.PLAIN, 22));
         itemNameLabel.setFont(font);
-
-        // Set the preferred size for the item name field
         itemNameField.setPreferredSize(new Dimension(500, 50));
 
         JLabel unitLabel = new JLabel("Unit:");
-        unitField = new JTextField();
         unitLabel.setFont(font);
 
-        // Set the preferred size for the unit field
-        unitField.setPreferredSize(new Dimension(500, 50));
+        // dropdown button
+        unitComboBox = new JComboBox<>(getUniqueUnitsFromDatabase());
+        unitComboBox.setFont(new Font("Segoe print", Font.PLAIN, 22));
+        unitComboBox.setPreferredSize(new Dimension(500, 50));
 
         formPanel.add(itemNameLabel, gbc);
         gbc.gridy++;
@@ -88,9 +90,9 @@ public class Search extends JFrame {
         gbc.gridy++;
         formPanel.add(unitLabel, gbc);
         gbc.gridy++;
-        formPanel.add(unitField, gbc);
+        formPanel.add(unitComboBox, gbc);
 
-        // Button panel
+        // button 
         showTableButton = new JButton("Show Item Table");
         showTableButton.setPreferredSize(buttonSize);
         showTableButton.setMaximumSize(maxsize);
@@ -103,13 +105,10 @@ public class Search extends JFrame {
             }
         });
 
-        // Bottom panel with login button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(showTableButton);
 
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
-
-        //init frame
         mainPanel.add(formPanel, BorderLayout.CENTER);
 
         // Sidebar
@@ -141,6 +140,27 @@ public class Search extends JFrame {
         setVisible(true);
     }
 
+    // get unit from db
+    private String[] getUniqueUnitsFromDatabase() {
+        List<String> units = new ArrayList<>();
+
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT DISTINCT UPPER(unit) FROM lookup_item");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()) {
+                units.add(resultSet.getString(1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error fetching units from the database.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        return units.toArray(new String[0]);
+    }
+
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":
@@ -161,33 +181,33 @@ public class Search extends JFrame {
         }
     }
 
-
+    // show item table
     private void showItemTable() {
         String partialItemName = "%" + itemNameField.getText().trim().toUpperCase() + "%";
-        String unit = unitField.getText().trim().toUpperCase();
-
+        String unit = Objects.requireNonNull(unitComboBox.getSelectedItem()).toString().trim().toUpperCase();
+    
         if (partialItemName.isEmpty() || unit.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please enter both item name and unit.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+    
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
-             PreparedStatement preparedStatement = connection.prepareStatement(
-                     "SELECT * FROM lookup_item WHERE UPPER(item) LIKE ? AND UPPER(unit) = ?")) {
-
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM lookup_item WHERE UPPER(item) LIKE ? AND UPPER(unit) = ?")) {
+    
             preparedStatement.setString(1, partialItemName);
             preparedStatement.setString(2, unit);
-
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            new SearchTable(username, resultSet);
-            dispose();
-
+    
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                new SearchTable(username, resultSet);
+                dispose();
+            }
+    
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error fetching data from the database.", "Error", JOptionPane.ERROR_MESSAGE);
         }
-    }
+    }    
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {

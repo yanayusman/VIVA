@@ -1,9 +1,12 @@
 package PRICECATCHER;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
 
 public class MainFrame extends JFrame {
     final private Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -15,7 +18,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame(String username) {
         this.username = username;
-
+        
         initialize();
     }
 
@@ -27,7 +30,12 @@ public class MainFrame extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(0, 1, 10, 10));
+        panel.setOpaque(false);
+        panel.setBorder(BorderFactory.createEmptyBorder(30, 10, 0, 30));
+
+        // top panel, sign out button
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(dimension);
@@ -41,19 +49,28 @@ public class MainFrame extends JFrame {
             }
         });
 
-        JLabel mainLabel = new JLabel("Welcome to Price Checker!");
-        mainLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
-        mainLabel.setHorizontalAlignment(JLabel.CENTER);
-        mainPanel.add(mainLabel, BorderLayout.CENTER);
-
-        // Inserting an image using JLabel
-        ImageIcon imageIcon = new ImageIcon("background_1.jpg");
-        JLabel imageLabel = new JLabel(imageIcon);
-        mainPanel.add(imageLabel, BorderLayout.NORTH);
-
         topPanel.add(signOutButton, BorderLayout.EAST);
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
         mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        // resized image
+        JLabel imageLabel = loadImage("loginbg_3.png", true,300, 300);
+
+        // text
+        JLabel mainLabel = new JLabel("Welcome to Price Checker!");
+        mainLabel.setFont(new Font("Segoe print", Font.BOLD, 30));
+        mainLabel.setHorizontalAlignment(JLabel.CENTER);
+        
+        panel.add(imageLabel);
+        panel.add(mainLabel);
+
+        mainPanel.add(panel, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setOpaque(false);
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(0, 50, 300, 80));
+
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
 
         // Sidebar
         JPanel sidebar = new JPanel();
@@ -75,6 +92,7 @@ public class MainFrame extends JFrame {
             sidebar.add(button);
         }
 
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
@@ -84,6 +102,27 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
+    // load image
+    private JLabel loadImage(String fileName, boolean isResized, int targetWidth, int targetHeight) {
+        BufferedImage image;
+        JLabel imageContainer;
+
+        try {
+            image = ImageIO.read(new File(fileName));
+
+            if (isResized) {
+                image = resizeImage(image, targetWidth, targetHeight);
+            }
+
+            imageContainer = new JLabel(new ImageIcon(image));
+            return imageContainer;
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+            return null;
+        }
+    }
+
+    // sidebar button
     private void handleSidebarButtonClick(String label) {
         switch (label) {
             case "Home":
@@ -102,6 +141,17 @@ public class MainFrame extends JFrame {
                 new Acc(username);
                 break;
         }
+    }
+
+    // resizing image
+    private BufferedImage resizeImage(BufferedImage image, int targetWidth, int targetHeight) {
+        BufferedImage resizedImg = new BufferedImage(targetWidth,
+                targetHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = resizedImg.createGraphics();
+        graphics2D.drawImage(image, 0, 0, targetWidth,
+                targetHeight, null);
+        graphics2D.dispose();
+        return resizedImg;
     }
 
     public static void main(String[] args) {

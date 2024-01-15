@@ -27,6 +27,7 @@ public class CheapestSeller extends JFrame {
         displayCheapestItems();
     }
 
+    // display cheapest items
     private void displayCheapestItems() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT item_name, premise_code, MIN(price) AS min_price FROM cart WHERE username = ? GROUP BY item_name, premise_code")) {
@@ -34,7 +35,7 @@ public class CheapestSeller extends JFrame {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            // Create a map to store the cheapest items
+            // map to store the cheapest items
             Map<String, Object[]> cheapestItemsMap = new HashMap<>();
 
             while (resultSet.next()) {
@@ -46,6 +47,7 @@ public class CheapestSeller extends JFrame {
                 cheapestItemsMap.put(itemName, new Object[]{itemName, premiseName, minPrice});
             }
 
+            // table
             DefaultTableModel tableModel = new DefaultTableModel();
             tableModel.addColumn("Item Name");
             tableModel.addColumn("Premise Name");
@@ -71,13 +73,14 @@ public class CheapestSeller extends JFrame {
         }
     }
 
+    // display total
     public void displayTotal() {
         double total = 0;
 
         DefaultTableModel tableModel = (DefaultTableModel) cheapestItemsTable.getModel();
 
         for (int i = 0; i < tableModel.getRowCount(); i++) {
-            double cheapestPrice = (double) tableModel.getValueAt(i, 2); // Assuming "Cheapest Price" is at column index 2
+            double cheapestPrice = (double) tableModel.getValueAt(i, 2);
             total += cheapestPrice;
         }
 
@@ -95,7 +98,7 @@ public class CheapestSeller extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -103,7 +106,6 @@ public class CheapestSeller extends JFrame {
         signOutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the sign-out action
                 JOptionPane.showMessageDialog(CheapestSeller.this, "Sign Out button clicked", "Sign Out", JOptionPane.INFORMATION_MESSAGE);
                 dispose();
                 Login loginForm = new Login();
@@ -142,19 +144,18 @@ public class CheapestSeller extends JFrame {
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
-        // Create a JLabel to display the total
+        // display the total
         totalLabel = new JLabel();
         totalLabel.setFont(font);
         totalLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // Create a JButton for the back action
+        // back button
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
         backButton.setFont(font);
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the back action
                 dispose();
                 new Cart(username);
             }
@@ -176,6 +177,7 @@ public class CheapestSeller extends JFrame {
         setVisible(true);
     }
 
+    // find premise name
     private String findPremiseNameFromCSV(String premiseCode) {
         String csvFilePath = "lookup_premise.csv";
         int lineCount = 0;
@@ -203,6 +205,7 @@ public class CheapestSeller extends JFrame {
         return premiseName;
     }
 
+    // check if its number
     private boolean isNumeric(String str) {
         try {
             Double.parseDouble(str);
@@ -212,6 +215,7 @@ public class CheapestSeller extends JFrame {
         }
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":

@@ -53,7 +53,7 @@ public class ItemTable extends JFrame {
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // Top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -67,18 +67,16 @@ public class ItemTable extends JFrame {
             }
         });
 
-        // create text label
         JLabel topTextLabel = new JLabel("Top 5 Cheapest Sellers for " + itemName);
         topTextLabel.setFont(new Font("Segoe print", Font.PLAIN, 18));
 
-        // Add a button to show price trend chart
+        // price trend button
         JButton showPriceTrendButton = new JButton("Show Price Trend");
         showPriceTrendButton.setPreferredSize(new Dimension(200, 50));
         showPriceTrendButton.setFont(font);
         showPriceTrendButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Handle the button click to show the price trend chart
                 Map<String, Double> priceMap = loadPriceData();
                 new PriceTrend(username, itemName, priceMap);
             }
@@ -95,7 +93,7 @@ public class ItemTable extends JFrame {
         DefaultTableModel tableModel = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int row, int column) {
-                // Make all cells non-editable except for the "Add to Cart" column
+                // for all cells non-editable except for the "Add to Cart" column
                 return column == getColumnCount() - 1;
             }
         };
@@ -109,7 +107,6 @@ public class ItemTable extends JFrame {
         table.setFont(font);
         table.setRowHeight(30);
 
-        // Set a custom renderer for the "Add to Cart" column
         table.getColumnModel().getColumn(table.getColumnCount() - 1).setCellRenderer(new ButtonRenderer(table));
 
         for(Item item : itemList){
@@ -117,34 +114,37 @@ public class ItemTable extends JFrame {
                 itemCodes = item.getItemCode();
         }
 
-        // Load premise and price data
+        // load premise and price data
         List<Premise> premises = loadPremiseData();
         Map<String, Double> priceMap = loadPriceData();
 
-        // Calculate the top 5 cheapest sellers
+        // calculate the top 5 cheapest sellers
         List<Map.Entry<String, Double>> cheapestSellers = getTopCheapestSellers(priceMap, 5);
 
-        // Add data to the table model
-        for (Map.Entry<String, Double> seller : cheapestSellers) {
-            Premise premise = findPremiseByName(premises, seller.getKey());
+        if (cheapestSellers.isEmpty()) {
+            JOptionPane.showMessageDialog(ItemTable.this,"Sorry, no result for the item: " + itemName,"No Results", JOptionPane.INFORMATION_MESSAGE);
+            new Browse(username).initialize(); 
+            dispose();
+            return;
+        } else {
+            DefaultTableModel tableModels = (DefaultTableModel) table.getModel();
+            for (Map.Entry<String, Double> seller : cheapestSellers) {
+                Premise premise = findPremiseByName(premises, seller.getKey());
 
-            JButton addToCartButton = new JButton("Add to Cart");
+                JButton addToCartButton = new JButton("Add to Cart");
 
-            // Store the mapping in the map
-            sellerPremiseMap.put(seller.getKey(), premise.getPremiseCode());
+                sellerPremiseMap.put(seller.getKey(), premise.getPremiseCode());
 
-            tableModel.addRow(new Object[]{seller.getKey(), seller.getValue(), premise.getAddress(), addToCartButton});
+                tableModels.addRow(new Object[]{seller.getKey(), seller.getValue(), premise.getAddress(), addToCartButton});
+            }
         }
 
-
-        // Add a listener for cell clicks in the "Add to Cart" column
         table.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 int column = table.getColumnModel().getColumnIndex("Add to Cart");
                 int row = table.rowAtPoint(evt.getPoint());
                 if (row >= 0 && column == table.columnAtPoint(evt.getPoint())) {
-                    // Handle the button click event (add to cart logic)
                     ((ButtonRenderer) table.getCellRenderer(row, column)).doClick();
                 }
             }
@@ -153,12 +153,12 @@ public class ItemTable extends JFrame {
         JScrollPane scrollPane = new JScrollPane(table);
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Bottom panel with Back button
+        // bottom panel with back button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton backButton = new JButton("Back");
         backButton.setPreferredSize(buttonSize);
         backButton.setFont(font);
-        backButton.addActionListener(e -> dispose()); // Close the current frame
+        backButton.addActionListener(e -> dispose());
 
         bottomPanel.add(backButton);
         mainPanel.add(bottomPanel, BorderLayout.SOUTH);
@@ -183,6 +183,7 @@ public class ItemTable extends JFrame {
             sidebar.add(button);
         }
 
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
@@ -192,6 +193,7 @@ public class ItemTable extends JFrame {
         setVisible(true);
     }
 
+    // button for add to cart
     private class ButtonRenderer extends JButton implements TableCellRenderer, ActionListener {
         private int selectedRow;
 
@@ -215,27 +217,20 @@ public class ItemTable extends JFrame {
 
             String quantity = "1";
 
-            // Retrieve the premise code from the map
             premiseCode = sellerPremiseMap.get(seller);
 
-            // Check if the item is already in the cart
             if (isItemInCart(username, premiseCode)) {
-                // If yes, update the quantity
                 updateCartItemQuantity(username, itemCodes, quantity, premiseCode);
             } else {
-                // If no, add the item to the cart in the database
                 addItemToCart(username, itemCodes, itemName, unit, quantity, price, premiseCode);
             }
 
             System.out.println("Premise code now is: " + premiseCode);
-            // Display a confirmation message
-            JOptionPane.showMessageDialog(ItemTable.this,
-                    "Item added to cart:\nSeller: " + seller + "\nPrice: " + price + "\nAddress: " + address,
-                    "Add to Cart", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(ItemTable.this, "Item added to cart:\nSeller: " + seller + "\nPrice: " + price + "\nAddress: " + address, "Add to Cart", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
-    // Check if the item is already in the cart
+    // check if the item is already in the cart
     private boolean isItemInCart(String username, String itemCode) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1")) {
             String query = "SELECT COUNT(*) FROM cart WHERE username = ? AND item_code = ?";
@@ -257,7 +252,7 @@ public class ItemTable extends JFrame {
         return false;
     }
 
-    // Update the quantity of an item in the cart
+    // update the quantity of an item in the cart
     private void updateCartItemQuantity(String username, String itemCode, String quantity, String premiseCode) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1")) {
             String query = "UPDATE cart SET quantity = quantity + ?, premise_code = ? WHERE username = ? AND item_code = ?";
@@ -270,9 +265,7 @@ public class ItemTable extends JFrame {
                 int result = pS.executeUpdate();
     
                 if (result > 0) {
-                    // Quantity and premiseCode updated successfully
                     System.out.println("Quantity and premiseCode updated for item in cart for " + username);
-                    // Optionally, you can navigate to the cart or update UI here
                 } else {
                     JOptionPane.showMessageDialog(this, "Quantity and premiseCode failed to be updated in the cart. Please try again.");
                 }
@@ -284,7 +277,7 @@ public class ItemTable extends JFrame {
     }
     
     
-    // Add this method to your ItemTable class to execute the SQL query and add the item to the cart
+    // add the item to the cart
     private void addItemToCart(String username, String itemCode, String itemName, String unit, String quantity, double price, String premiseCode) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1")) {
             String query = "INSERT INTO cart (username, item_code, premise_code, item_name, unit, quantity, price) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -300,9 +293,7 @@ public class ItemTable extends JFrame {
                 int result = pS.executeUpdate();
     
                 if (result > 0) {
-                    // Item added successfully
                     System.out.println("Item added to cart for " + username);
-                    // Optionally, you can navigate to the cart or update UI here
                 } else {
                     JOptionPane.showMessageDialog(this, "Item failed to be added to the cart. Please try again.");
                 }
@@ -313,6 +304,7 @@ public class ItemTable extends JFrame {
         }
     }
 
+    // load item data
     private void loadItemData() {
         String file = "lookup_item.csv";
         String line = "";
@@ -335,6 +327,7 @@ public class ItemTable extends JFrame {
         }
     }
 
+    // store item data in itemList
     private Item createItem(String[] parts) {
         String itemCode = parts[0];
         String itemName = parts[1];
@@ -344,6 +337,7 @@ public class ItemTable extends JFrame {
         return new Item(itemCode, itemName, unit, itemGroup, itemCategory);
     }
 
+    // load premise data
     private List<Premise> loadPremiseData() {
         String file = "lookup_premise.csv";
         int lineCount = 0;
@@ -355,7 +349,7 @@ public class ItemTable extends JFrame {
                 if(lineCount < 2 || lineCount == 2709){
                     continue;
                 }
-                
+
                 String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
                 
                 for(int i = 0; i < parts.length; i++){
@@ -371,6 +365,7 @@ public class ItemTable extends JFrame {
         return premiseList;
     }
 
+    // store premise data into premiseList
     private Premise createPremise(String[] parts) {
         if (parts.length >= 6) {
             String premiseCodeString = parts[0];
@@ -398,6 +393,7 @@ public class ItemTable extends JFrame {
         }
     }
 
+    // load price data
     private void loadItemPrice() {
         String file = "pricecatcher_2023-08.csv";
         String line = "";
@@ -418,6 +414,7 @@ public class ItemTable extends JFrame {
         }
     }
 
+    // store price data into priceList
     private static PriceCatcherData createPriceFromPriceCatcherData(String[] parts) {
         String date = parts[0];
         String premiseCode = parts[1];
@@ -432,49 +429,54 @@ public class ItemTable extends JFrame {
         }
     }
     
-
+    // load price data and store into premise map
     private Map<String, Double> loadPriceData() {
         Map<String, Double> priceMap = new HashMap<>();
         String file = "pricecatcher_2023-08.csv";
-    
+
+        if (itemCodes == null) {
+            System.err.println("Item codes are not initialized. Please set itemCodes before calling loadPriceData.");
+            return priceMap;
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             int lineCount = 0;
-    
+
             while ((line = reader.readLine()) != null) {
                 lineCount++;
                 if (lineCount <= 1) {
                     continue;
                 }
-    
+
                 String[] parts = line.split(",");
                 String premiseCode = parts[1].trim();
                 String itemCode = parts[2].trim();
                 double price = Double.parseDouble(parts[3].trim());
-    
+
                 if (itemCode.equals(this.itemCodes)) {
-                    // Check if itemCode matches the selected item
                     String premiseName = findPremiseNameByCode(premiseList, premiseCode);
                     priceMap.put(premiseName, price);
-                }                
+                }
             }
-        } catch (IOException e) {
+        } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
         }
-    
+
         return priceMap;
     }
 
+
+    // get top cheapest sellers
     private List<Map.Entry<String, Double>> getTopCheapestSellers(Map<String, Double> priceMap, int topCount) {
         List<Map.Entry<String, Double>> sortedList = new ArrayList<>(priceMap.entrySet());
 
-        // Sort the list by price in ascending order
         sortedList.sort(Map.Entry.comparingByValue());
 
-        // Get the top N cheapest sellers
         return sortedList.subList(0, Math.min(topCount, sortedList.size()));
     }
 
+    // find premise name by premise code
     private String findPremiseNameByCode(List<Premise> premises, String code) {
         for (Premise premise : premises) {
             if (premise.getPremiseCode().equals(code)) {
@@ -484,6 +486,7 @@ public class ItemTable extends JFrame {
         return "";
     }
 
+    // find premise name by premise name
     private Premise findPremiseByName(List<Premise> premises, String name) {
         for (Premise premise : premises) {
             if (premise.getPremise().equals(name)) {
@@ -493,6 +496,7 @@ public class ItemTable extends JFrame {
         return null;
     }
 
+    // sidebar button
     private void btnClick(String label) {
         switch (label) {
             case "Home":

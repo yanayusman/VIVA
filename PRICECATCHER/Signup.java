@@ -116,7 +116,7 @@ public class Signup extends JFrame{
             } 
         });
 
-        // Bottom panel with login button
+        // login button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(btnsignup);
 
@@ -131,6 +131,7 @@ public class Signup extends JFrame{
         setVisible(true);
     }
 
+    // signup to db
     private void signup() {
         String Username = username.getText();
         String Password = new String(pswd.getPassword());
@@ -141,7 +142,6 @@ public class Signup extends JFrame{
         String State = state.getText();
         String Poscode = poscode.getText();
 
-        // JDBC code to insert data into the database
         try {
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pricecatcher", "sqluser", "welcome1");
             String query = "INSERT INTO user (username, password, email, contactnum, address, city, state, poscode) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -160,10 +160,9 @@ public class Signup extends JFrame{
             if (result > 0) {
                 JOptionPane.showMessageDialog(this, "Signup successful!");
 
-                // Write user details to CSV file
+                // write user details to CSV file
                 writeUserToCSV(Username, Password, Email, contactNum, Address, City, State, Poscode);
 
-                // Open login window
                 Login login = new Login();
                 login.initialize();
                 dispose();
@@ -179,6 +178,7 @@ public class Signup extends JFrame{
         }
     }
 
+    // write user to CSV
     private void writeUserToCSV(String username, String password, String email, String contactNum, String address, String city, String state, String poscode) {
         String csvFilePath = "userDetails.csv";
 

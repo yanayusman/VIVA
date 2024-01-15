@@ -6,6 +6,7 @@ import java.awt.*;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class SearchTable extends JFrame {
     private final Font font = new Font("Segoe print", Font.BOLD, 18);
@@ -17,7 +18,6 @@ public class SearchTable extends JFrame {
     private DefaultTableModel tableModel;
     private String username;
     private ResultSet resultSet;
-    private JTextField searchField;
 
     public SearchTable(String username, ResultSet resultSet) {
         this.username = username;
@@ -36,7 +36,7 @@ public class SearchTable extends JFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 5, 20, 5));
 
-        // top panel with Sign Out button and title
+        // top panel, sign out button and title
         JPanel topPanel = new JPanel(new BorderLayout());
         JButton signOutButton = new JButton("Sign Out");
         signOutButton.setPreferredSize(buttonSize);
@@ -54,6 +54,7 @@ public class SearchTable extends JFrame {
         topPanel.add(new JSeparator(), BorderLayout.SOUTH);
         topPanel.add(mainLabel, BorderLayout.CENTER);
 
+        // table
         tableModel = new DefaultTableModel();
         itemTable = new JTable(tableModel);
 
@@ -66,22 +67,25 @@ public class SearchTable extends JFrame {
             }
 
             while (resultSet.next()) {
-                Object[] rowData = new Object[columnCount];
-                for (int i = 1; i <= columnCount; i++) {
-                    rowData[i - 1] = resultSet.getObject(i);
-                }
-                tableModel.addRow(rowData);
+            Object[] rowData = new Object[columnCount];
+            for (int i = 1; i <= columnCount; i++) {
+                rowData[i - 1] = resultSet.getObject(i);
             }
+            System.out.println("Row Data: " + Arrays.toString(rowData));
+            tableModel.addRow(rowData);
+        }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        // user select row
         itemTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 int selectedRow = itemTable.getSelectedRow();
                 if (selectedRow != -1) {
                     String selectedUnit = (String) itemTable.getValueAt(selectedRow, 0);
-                    String selectedItemName = (String) itemTable.getValueAt(selectedRow, 1); // Assuming unit is in the second column
+                    String selectedItemName = (String) itemTable.getValueAt(selectedRow, 1);
                     showItemDetails(selectedItemName, selectedUnit);
                 }
             }
@@ -110,6 +114,7 @@ public class SearchTable extends JFrame {
             sidebar.add(button);
         }
 
+        // splitpane for sidebar
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidebar, mainPanel);
         splitPane.setDividerLocation(220);
 
@@ -121,13 +126,15 @@ public class SearchTable extends JFrame {
         setVisible(true);
     }
 
+    // show item details
     private void showItemDetails(String itemName, String unit) {
-    System.out.println("Selected Item: " + itemName + ", Unit: " + unit);
-
-    new ItemTable(username, itemName, unit).initialize();
-    dispose();
-}
-
+        System.out.println("Selected Item: " + itemName + ", Unit: " + unit);
+    
+        new ItemTable(username, itemName, unit).initialize();
+        dispose();
+    }
+    
+    // sidebar button
     private void handleSidebarButtonClick(String label) {
         switch (label) {
             case "Home":
